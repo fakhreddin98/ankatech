@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kontakt | ANKA Tech</title>
+  <meta name="description" content="Kontakta ANKA Tech för uppdrag, teknisk problemlösning eller samarbete.">
+  <link rel="preload" href="assets/anka-tech-logo.png" as="image">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html" aria-label="ANKA Tech startsida">
+    <img src="assets/anka-tech-logo.png" alt="ANKA Tech" />
+  </a>
+  <button class="menu-button" aria-label="Öppna meny" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="site-nav" aria-label="Huvudmeny">
+    <a class="nav-link " href="index.html">Start</a>
+<a class="nav-link " href="tjanster.html">Tjänster</a>
+<a class="nav-link " href="partners.html">Partners</a>
+<a class="nav-link " href="uppdrag.html">Uppdrag</a>
+<a class="nav-link active" href="kontakt.html">Kontakt</a>
+    <a class="nav-cta" href="kontakt.html">Starta dialog</a>
+  </nav>
+</header>
+<main>
+
+<section class="page-hero">
+  <p class="eyebrow">Kontakt</p>
+  <h1>Kontakta ANKA Tech.</h1>
+  <p>Fyll i formuläret med uppdrag, fråga eller teknisk utmaning. Ju tydligare beskrivning, desto snabbare kan nästa steg bedömas.</p>
+</section>
+
+<section class="section contact-layout">
+  <form class="contact-form" action="https://formsubmit.co/fakhreddin.kabawe@icloud.com" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_subject" value="Ny kontaktförfrågan via ANKA Tech">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
+
+    <label>Kontaktroll
+      <select name="Kontaktroll" required>
+        <option value="">Välj roll</option>
+        <option>Uppdragstagare</option>
+        <option>Uppdragsgivare</option>
+      </select>
+    </label>
+
+    <div class="form-grid">
+      <label>Namn
+        <input type="text" name="Namn" autocomplete="name" required>
+      </label>
+      <label>Telefonnummer
+        <input type="tel" name="Telefonnummer" autocomplete="tel">
+      </label>
+      <label>E-post
+        <input type="email" name="E-post" autocomplete="email" required>
+      </label>
+      <label>Bolag / organisation
+        <input type="text" name="Bolag">
+      </label>
+    </div>
+
+    <label>Adress
+      <input type="text" name="Adress" autocomplete="street-address">
+    </label>
+
+    <label>Bilaga / CV
+      <input type="file" name="Bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+    </label>
+
+    <label>Meddelande
+      <textarea name="Meddelande" rows="7" required placeholder="Beskriv uppdraget, miljön, tidsplanen eller vilken typ av stöd du söker."></textarea>
+    </label>
+
+    <label class="consent">
+      <input type="checkbox" name="Samtycke" required>
+      <span>Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
+    </label>
+
+    <button class="button primary" type="submit">Skicka förfrågan</button>
+  </form>
+
+  <aside class="contact-aside">
+    <div class="aside-card">
+      <h2>Vad händer efter kontakt?</h2>
+      <p>Förfrågan granskas utifrån tekniskt område, omfattning och tidsplan. Vid rätt matchning bokas ett kort avstämningsmöte.</p>
+    </div>
+    <div class="aside-card">
+      <h3>Relevanta uppgifter att ange</h3>
+      <ul>
+        <li>Typ av system, testmiljö eller produkt</li>
+        <li>Problem som ska lösas eller mål som ska verifieras</li>
+        <li>Önskad tidsplan och omfattning</li>
+        <li>Eventuella krav på plats, verktyg eller sekretess</li>
+      </ul>
+    </div>
+  </aside>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <img class="footer-logo" src="assets/anka-tech-logo.png" alt="ANKA Tech" />
+      <p>Produktutveckling, teknisk problemlösning och verifiering för avancerade fordonsmiljöer.</p>
+    </div>
+    <div>
+      <h3>Sidor</h3>
+      <div class="footer-links"><a href="index.html">Start</a>
+<a href="tjanster.html">Tjänster</a>
+<a href="partners.html">Partners</a>
+<a href="uppdrag.html">Uppdrag</a>
+<a href="kontakt.html">Kontakt</a></div>
+    </div>
+    <div>
+      <h3>Fokus</h3>
+      <p>ADAS · Euro NCAP · Testautomation · GNSS/INS · Mätdata · Verifiering</p>
+    </div>
+    <div>
+      <h3>Bolag</h3>
+      <p>ANKA Engineering AB<br>Varumärke: ANKA Tech</p>
+      <a href="kontakt.html">Kontakta oss</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> ANKA Engineering AB</span>
+    <span>Teknisk konsultverksamhet med fokus på robusta testmiljöer.</span>
+  </div>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
