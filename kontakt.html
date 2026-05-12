@@ -35,10 +35,9 @@
 
 <section class="section contact-layout">
   <form class="contact-form" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="_subject" value="Ny kontaktförfrågan via ANKA Tech">
 
     <label>Kontaktroll
-      <select name="Kontaktroll" required>
+      <select name="fi-text-kontaktroll" required>
         <option value="">Välj roll</option>
         <option>Uppdragstagare</option>
         <option>Uppdragsgivare</option>
@@ -47,33 +46,33 @@
 
     <div class="form-grid">
       <label>Namn
-        <input type="text" name="Namn" autocomplete="name" required>
+        <input type="text" name="fi-sender-fullName" autocomplete="name" required>
       </label>
       <label>Telefonnummer
-        <input type="tel" name="Telefonnummer" autocomplete="tel">
+        <input type="tel" name="fi-sender-phone" autocomplete="tel">
       </label>
       <label>E-post
-        <input type="email" name="E-post" autocomplete="email" required>
+        <input type="email" name="fi-sender-email" autocomplete="email" required>
       </label>
       <label>Bolag / organisation
-        <input type="text" name="Bolag">
+        <input type="text" name="fi-text-bolag">
       </label>
     </div>
 
     <label>Adress
-      <input type="text" name="Adress" autocomplete="street-address">
+      <input type="text" name="fi-text-adress" autocomplete="street-address">
     </label>
 
     <label>Bilaga / CV
-      <input type="file" name="Bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+      <input type="file" name="fi-file-bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
     </label>
 
     <label>Meddelande
-      <textarea name="Meddelande" rows="7" required placeholder="Beskriv uppdraget, miljön, tidsplanen eller vilken typ av stöd du söker."></textarea>
+      <textarea name="fi-textarea-meddelande" rows="7" required placeholder="Beskriv uppdraget, miljön, tidsplanen eller vilken typ av stöd du söker."></textarea>
     </label>
 
     <label class="consent">
-      <input type="checkbox" name="Samtycke" required>
+      <input type="checkbox" name="fi-text-samtycke" required>
       <span>Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
     </label>
 
