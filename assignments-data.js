@@ -1,15 +1,4 @@
-/*
-  Här lägger du enkelt till eller tar bort uppdrag.
-
-  Så här publicerar du ett nytt uppdrag:
-  1. Kopiera ett uppdragsblock.
-  2. Ändra id, title, location, scope, start, tags och description.
-  3. Sätt featured: true om uppdraget ska synas på startsidan.
-  4. Sätt status: "open" för aktiva uppdrag eller "closed" för stängda.
-
-  Formulären skickas via FormSubmit. Byt REPLACE_WITH_YOUR_EMAIL i HTML/JS
-  till rätt mottagaradress innan publicering.
-*/
+/* Fallbackdata. Adminportalen redigerar content/assignments.json. */
 
 window.ANKA_ASSIGNMENTS = [
   {

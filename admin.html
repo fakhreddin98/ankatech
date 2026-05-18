@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Adminportal | ANKA Tech</title>
+  <meta name="description" content="Adminportal för ANKA Tech.">
+  <link rel="icon" href="anka-tech-mini-logo.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="noise" aria-hidden="true"></div>
+<canvas id="tech-canvas" aria-hidden="true"></canvas>
+<header class="site-header">
+  <a class="brand" href="index.html" aria-label="ANKA Tech startsida">
+    <img src="anka-tech-logo.png" alt="ANKA Tech">
+  </a>
+  <button class="menu-button" aria-label="Öppna meny" aria-expanded="false"><span></span><span></span><span></span></button>
+  <nav class="site-nav" aria-label="Huvudmeny">
+    <a class="nav-link" href="index.html">Start</a>
+    <a class="nav-link" href="tjanster.html">Tjänster</a>
+    <a class="nav-link" href="partners.html">Partners</a>
+    <a class="nav-link" href="uppdrag.html">Uppdrag</a>
+    <a class="nav-link" href="kontakt.html">Kontakt</a>
+    <a class="nav-cta magnetic" href="kontakt.html">Starta dialog</a>
+    <div class="lang-switch" aria-label="Language selector">
+      <button class="lang-option" type="button" data-set-lang="sv" aria-label="Svenska">SV</button>
+      <button class="lang-option" type="button" data-set-lang="en" aria-label="English">EN</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+<section class="page-hero reveal">
+  <p class="eyebrow">Adminportal</p>
+  <h1>Hantera uppdrag och formulär.</h1>
+  <p>Här finns de två viktigaste länkarna för administration: Pages CMS för att lägga till och ändra uppdrag, samt Getform för att läsa inkomna formulär.</p>
+</section>
+
+<section class="section admin-grid reveal">
+  <article class="admin-card">
+    <span class="number">01</span>
+    <h2>Uppdrag och innehåll</h2>
+    <p>Logga in med GitHub och öppna rätt repository. Där kan du lägga till, stänga eller ändra uppdrag utan att röra HTML-koden.</p>
+    <a class="button primary magnetic" href="https://app.pagescms.org" target="_blank" rel="noopener">Öppna Pages CMS</a>
+  </article>
+
+  <article class="admin-card">
+    <span class="number">02</span>
+    <h2>Inskickade formulär</h2>
+    <p>Logga in på Getform för att se kontaktförfrågningar, uppdragsansökningar och spontanansökningar med bifogade CV:n.</p>
+    <a class="button ghost" href="https://getform.io" target="_blank" rel="noopener">Öppna Getform</a>
+  </article>
+</section>
+
+<section class="section dark-panel reveal">
+  <div>
+    <p class="eyebrow invert">Flöde</p>
+    <h2>Så uppdateras sidan.</h2>
+  </div>
+  <div class="process">
+    <div><span>01</span><strong>Ändra i Pages CMS</strong><p>Uppdrag sparas i GitHub i filen content/assignments.json.</p></div>
+    <div><span>02</span><strong>GitHub uppdateras</strong><p>Pages CMS gör en commit till repot när du sparar.</p></div>
+    <div><span>03</span><strong>Vercel publicerar</strong><p>När GitHub uppdateras bygger Vercel om sidan automatiskt.</p></div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-orbit" aria-hidden="true"></div>
+  <div class="footer-grid">
+    <div>
+      <img class="footer-logo" src="anka-tech-logo.png" alt="ANKA Tech">
+      <p>Produktutveckling, teknisk problemlösning och verifiering för avancerade fordonsmiljöer.</p>
+    </div>
+    <div>
+      <h3>Sidor</h3>
+      <a href="index.html">Start</a>
+      <a href="tjanster.html">Tjänster</a>
+      <a href="partners.html">Partners</a>
+      <a href="uppdrag.html">Uppdrag</a>
+      <a href="kontakt.html">Kontakt</a>
+      <a href="admin.html">Adminportal</a>
+    </div>
+    <div>
+      <h3>Fokus</h3>
+      <p>ADAS · Euro NCAP · Testautomation · GNSS/INS · Mätdata · Verifiering</p>
+    </div>
+    <div>
+      <h3>Bolag</h3>
+      <p>ANKA Engineering AB<br>Varumärke: ANKA Tech</p>
+      <a class="footer-pill" href="kontakt.html">Kontakta oss</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> ANKA Engineering AB</span>
+    <span>Intern adminlänk för innehåll och formulär.</span>
+  </div>
+</footer>
+<script src="assignments-data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

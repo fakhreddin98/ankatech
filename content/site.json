@@ -1,0 +1,11 @@
+{
+  "company": "ANKA Engineering AB",
+  "brand": "ANKA Tech",
+  "admin": {
+    "pagesCmsUrl": "https://app.pagescms.org",
+    "getformUrl": "https://getform.io"
+  },
+  "contact": {
+    "formEndpoint": "https://getform.io/f/9yi31ff8imi"
+  }
+}

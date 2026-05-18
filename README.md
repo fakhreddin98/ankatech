@@ -1,111 +1,48 @@
-# ANKA Tech webbplats
+# ANKA Tech – GitHub, Vercel och adminportal
 
-Den här versionen behåller samma filstruktur som din nuvarande zip: HTML-, CSS-, JS- och bildfiler ligger direkt i huvudmappen `ankatech-main/`.
+Den här versionen är förberedd för ett enkelt adminflöde med GitHub, Vercel, Pages CMS och Getform.
 
-## Nytt i denna version
-- Modernare teknisk design med rörliga element.
-- Animerad canvas-bakgrund med punkter och linjer.
-- Hero med scanline, orbit-effekter och tekniska HUD-kort.
-- Språkknapp för svenska och engelska.
-- Val av språk sparas i webbläsaren med localStorage.
-- Alla bilder och loggor används från samma struktur som nuvarande zip.
+## Viktiga filer
 
-## Kör lokalt
-Öppna `index.html` direkt i webbläsaren eller kör:
+- `content/assignments.json` – uppdragen som visas på startsidan och uppdragssidan.
+- `content/site.json` – grundinställningar som Getform-endpoint och adminlänkar.
+- `.pages.yml` – konfiguration för Pages CMS.
+- `admin.html` – enkel adminlänk-sida på webbplatsen.
+- `assignments-data.js` – fallbackdata om sidan öppnas lokalt direkt från filsystemet.
+- `script.js` – hämtar uppdrag från `content/assignments.json`.
 
-```bash
-python3 -m http.server 8000
-```
+## Adminportal
 
-Gå sedan till:
+När sidan är publicerad kan du gå till:
 
-```text
-http://localhost:8000
-```
+`/admin.html`
 
-## Kontaktformulär
-I `kontakt.html`, byt:
+Där finns länkar till:
 
-```html
-https://formsubmit.co/REPLACE_WITH_YOUR_EMAIL
-```
+- Pages CMS – för att lägga till och ändra uppdrag.
+- Getform – för att läsa inkomna formulär och CV.
 
-till den e-postadress som ska ta emot formuläret.
+## Rekommenderat arbetsflöde
 
-## Publicering
-Filerna kan publiceras direkt på Netlify, Vercel, GitHub Pages eller ett vanligt webbhotell. Eftersom sidan är statisk behövs ingen backend för att visa sidan.
+1. Ladda upp hela mappen till ett GitHub-repository.
+2. Importera GitHub-repot till Vercel.
+3. Gå till Pages CMS och koppla GitHub-repot.
+4. Pages CMS läser `.pages.yml`.
+5. Lägg till eller ändra uppdrag i Pages CMS.
+6. När du sparar gör Pages CMS en commit i GitHub.
+7. Vercel publicerar om sidan automatiskt.
 
-## Viktig fix i denna version
-Denna version tar bort synliga `\n`-tecken som kunde visas på sidan. Det berodde på att radbrytningar hade hamnat som text i HTML-filerna i stället för riktiga radbrytningar.
+## Formulär
 
-## Header-fix
-Headern ligger nu alltid över innehållet och är klickbar. Den försvinner automatiskt när man scrollar nedåt och kommer tillbaka när man scrollar uppåt. Nära toppen visas den alltid.
-
-
-## UI-fixar
-- Logoväggen i sektionen med partners/tekniskt sammanhang har fått tydligare luft så rubriken inte hamnar över loggorna.
-- Språkväljaren är omgjord till en tydligare tvåläges-switch med separata knappar för SV och EN.
-
-## Uppdrag och ansökningar
-
-Den här versionen har en enkel uppdragsmodul.
-
-### Lägga till uppdrag
-Öppna filen `assignments-data.js`.
-
-Kopiera ett befintligt uppdrag och ändra:
-- `id`
-- `title`
-- `location`
-- `scope`
-- `start`
-- `tags`
-- `description`
-- `featured: true` om uppdraget ska synas på startsidan
-- `status: "open"` för aktivt uppdrag
-
-Spara filen och ladda upp sidan igen.
-
-### Ansökningsformulär
-På sidan `uppdrag.html` finns:
-- formulär för att söka ett specifikt uppdrag
-- formulär för spontanansökan med CV
-
-Byt `REPLACE_WITH_YOUR_EMAIL` i `uppdrag.html` till rätt e-postadress.
-Samma sak gäller kontaktformuläret i `kontakt.html`.
-
-### Viktigt
-Detta är en statisk lösning. För att lägga upp uppdrag via ett admin-gränssnitt behövs senare en backend eller CMS, till exempel:
-- Netlify CMS / Decap CMS
-- Sanity
-- WordPress headless
-- Supabase
-- egen adminpanel
-
-## Getform
-
-Alla formulär är nu kopplade till samma Getform-endpoint:
+Alla formulär använder Getform:
 
 `https://getform.io/f/9yi31ff8imi`
 
-Fältnamnen följer samma struktur som i kontaktformuläret:
+Fältnamn följer samma struktur som ditt kontaktformulär, exempel:
+
 - `fi-sender-fullName`
 - `fi-sender-phone`
 - `fi-sender-email`
-- `fi-text-bolag`
 - `fi-file-bilaga`
 - `fi-textarea-meddelande`
 - `fi-text-samtycke`
-
-Uppdrags- och spontanansökningsformulären använder samma endpoint och har extra fält som:
-- `fi-text-formulartyp`
-- `fi-text-uppdrag`
-- `fi-text-tillganglighet`
-- `fi-text-geografiskt-omrade`
-- `fi-text-kompetenser`
-
-## Formulärnotis borttagen
-
-Den synliga texten om `REPLACE_WITH_YOUR_EMAIL` är borttagen eftersom formulären redan använder Getform-endpointen:
-
-`https://getform.io/f/9yi31ff8imi`

@@ -261,3 +261,21 @@ translateLabels();
 renderAssignments();
 
 applyLang(localStorage.getItem('ankaLang') || 'sv');
+
+
+
+// Load assignments from CMS-managed JSON. The old assignments-data.js is only a fallback.
+async function loadCmsAssignments(){
+  try {
+    const response = await fetch('content/assignments.json', {cache: 'no-store'});
+    if (!response.ok) return;
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      window.ANKA_ASSIGNMENTS = data;
+      if (typeof renderAssignments === 'function') renderAssignments();
+    }
+  } catch (error) {
+    // Local file preview may block fetch. On Vercel/GitHub hosting it works normally.
+  }
+}
+loadCmsAssignments();
