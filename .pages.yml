@@ -14,7 +14,7 @@ content:
         label: ID
         type: string
         required: true
-        description: Unikt ID utan åäö, mellanslag eller specialtecken. Exempel: adas-engineer-2026.
+        description: "Unikt ID utan åäö, mellanslag eller specialtecken. Exempel: adas-engineer-2026."
       - name: status
         label: Status
         type: select
