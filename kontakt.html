@@ -3,128 +3,82 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Kontakt | ANKA Tech</title>
-  <meta name="description" content="Kontakta ANKA Tech för uppdrag, teknisk problemlösning eller samarbete.">
+  <title data-i18n-title="title.contact">Kontakt | ANKA Tech</title>
+  <meta name="description" content="Kontakta ANKA Tech för uppdrag, samarbete eller teknisk problemlösning.">
   <link rel="icon" href="anka-tech-mini-logo.png" type="image/png">
-  <link rel="preload" href="anka-tech-logo.png" as="image">
+  <link rel="preload" href="anka-tech-wide.png" as="image">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="noise" aria-hidden="true"></div>
+<canvas id="tech-canvas" aria-hidden="true"></canvas>
 <header class="site-header">
   <a class="brand" href="index.html" aria-label="ANKA Tech startsida">
-    <img src="anka-tech-logo.png" alt="ANKA Tech" />
+    <img src="anka-tech-logo.png" alt="ANKA Tech">
   </a>
-  <button class="menu-button" aria-label="Öppna meny" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="menu-button" aria-label="Öppna meny" aria-expanded="false"><span></span><span></span><span></span></button>
   <nav class="site-nav" aria-label="Huvudmeny">
-    <a class="nav-link " href="index.html">Start</a>
-<a class="nav-link " href="tjanster.html">Tjänster</a>
-<a class="nav-link " href="partners.html">Partners</a>
-<a class="nav-link " href="uppdrag.html">Uppdrag</a>
-<a class="nav-link active" href="kontakt.html">Kontakt</a>
-    <a class="nav-cta" href="kontakt.html">Starta dialog</a>
+    <a class="nav-link " href="index.html" data-i18n="nav.home">Start</a>
+    <a class="nav-link " href="tjanster.html" data-i18n="nav.services">Tjänster</a>
+    <a class="nav-link " href="partners.html" data-i18n="nav.partners">Partners</a>
+    <a class="nav-link " href="uppdrag.html" data-i18n="nav.assignments">Uppdrag</a>
+    <a class="nav-link active" href="kontakt.html" data-i18n="nav.contact">Kontakt</a>
+    <a class="nav-cta magnetic" href="kontakt.html" data-i18n="nav.cta">Starta dialog</a>
+    <div class="lang-switch" aria-label="Language selector">
+      <button class="lang-option" type="button" data-set-lang="sv" aria-label="Svenska">SV</button>
+      <button class="lang-option" type="button" data-set-lang="en" aria-label="English">EN</button>
+    </div>
   </nav>
 </header>
 <main>
-
-<section class="page-hero">
-  <p class="eyebrow">Kontakt</p>
-  <h1>Kontakta ANKA Tech.</h1>
-  <p>Fyll i formuläret med uppdrag, fråga eller teknisk utmaning. Ju tydligare beskrivning, desto snabbare kan nästa steg bedömas.</p>
+<section class="page-hero reveal">
+  <p class="eyebrow" data-i18n="contact.eyebrow">Kontakt</p>
+  <h1 data-i18n="contact.title">Starta en teknisk dialog.</h1>
+  <p data-i18n="contact.lead">Beskriv uppdraget, systemmiljön eller frågan. Formuläret är byggt för både uppdragsgivare och uppdragstagare.</p>
 </section>
-
 <section class="section contact-layout">
-  <form class="contact-form" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
-
-    <label>Kontaktroll
-      <select name="fi-text-kontaktroll" required>
-        <option value="">Välj roll</option>
-        <option>Uppdragstagare</option>
-        <option>Uppdragsgivare</option>
-      </select>
-    </label>
-
-    <div class="form-grid">
-      <label>Namn
-        <input type="text" name="fi-sender-fullName" autocomplete="name" required>
-      </label>
-      <label>Telefonnummer
-        <input type="tel" name="fi-sender-phone" autocomplete="tel">
-      </label>
-      <label>E-post
-        <input type="email" name="fi-sender-email" autocomplete="email" required>
-      </label>
-      <label>Bolag / organisation
-        <input type="text" name="fi-text-bolag">
-      </label>
-    </div>
-
-    <label>Adress
-      <input type="text" name="fi-text-adress" autocomplete="street-address">
-    </label>
-
-    <label>Bilaga / CV
-      <input type="file" name="fi-file-bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-    </label>
-
-    <label>Meddelande
-      <textarea name="fi-textarea-meddelande" rows="7" required placeholder="Beskriv uppdraget, miljön, tidsplanen eller vilken typ av stöd du söker."></textarea>
-    </label>
-
-    <label class="consent">
-      <input type="checkbox" name="fi-text-samtycke" required>
-      <span>Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
-    </label>
-
-    <button class="button primary" type="submit">Skicka förfrågan</button>
+  <form class="contact-form reveal" action="https://formsubmit.co/REPLACE_WITH_YOUR_EMAIL" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="_subject" value="Ny kontaktförfrågan via ANKA Tech"><input type="hidden" name="_captcha" value="false"><input type="hidden" name="_template" value="table">
+    <label><span data-i18n="form.role">Kontaktroll</span><select name="Kontaktroll" required><option value="" data-i18n="form.chooseRole">Välj roll</option><option data-i18n="form.contractor">Uppdragstagare</option><option data-i18n="form.client">Uppdragsgivare</option></select></label>
+    <div class="form-grid"><label><span data-i18n="form.name">Namn</span><input type="text" name="Namn" autocomplete="name" required></label><label><span data-i18n="form.phone">Telefonnummer</span><input type="tel" name="Telefonnummer" autocomplete="tel"></label><label><span data-i18n="form.email">E-post</span><input type="email" name="E-post" autocomplete="email" required></label><label><span data-i18n="form.company">Bolag / organisation</span><input type="text" name="Bolag"></label></div>
+    <label><span data-i18n="form.address">Adress</span><input type="text" name="Adress" autocomplete="street-address"></label>
+    <label><span data-i18n="form.attachment">Bilaga / CV</span><input type="file" name="Bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
+    <label><span data-i18n="form.message">Meddelande</span><textarea name="Meddelande" rows="7" required data-i18n-placeholder="form.messagePlaceholder" placeholder="Beskriv uppdraget, testmiljön, tidsplanen eller vilken typ av stöd du söker."></textarea></label>
+    <label class="consent"><input type="checkbox" name="Samtycke" required><span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span></label>
+    <button class="button primary magnetic" type="submit" data-i18n="form.submit">Skicka förfrågan</button>
+    <p class="form-note" data-i18n="form.note">Byt ut REPLACE_WITH_YOUR_EMAIL mot mottagarens e-postadress innan publicering.</p>
   </form>
-
-  <aside class="contact-aside">
-    <div class="aside-card">
-      <h2>Vad händer efter kontakt?</h2>
-      <p>Förfrågan granskas utifrån tekniskt område, omfattning och tidsplan. Vid rätt matchning bokas ett kort avstämningsmöte.</p>
-    </div>
-    <div class="aside-card">
-      <h3>Relevanta uppgifter att ange</h3>
-      <ul>
-        <li>Typ av system, testmiljö eller produkt</li>
-        <li>Problem som ska lösas eller mål som ska verifieras</li>
-        <li>Önskad tidsplan och omfattning</li>
-        <li>Eventuella krav på plats, verktyg eller sekretess</li>
-      </ul>
-    </div>
-  </aside>
+  <aside class="contact-aside reveal delay-1"><div class="aside-card"><div class="mini-radar"></div><h2 data-i18n="contact.asideTitle">Snabbare svar med rätt underlag</h2><p data-i18n="contact.asideText">Ange gärna systemtyp, testmiljö, tidsplan, verktyg, datakällor och vad som behöver verifieras eller lösas.</p></div><div class="aside-card"><h3 data-i18n="contact.fitTitle">Passar särskilt bra för</h3><ul><li data-i18n="contact.fit1">ADAS- och Euro NCAP-relaterade flöden</li><li data-i18n="contact.fit2">Testautomation och datainsamling</li><li data-i18n="contact.fit3">GNSS/INS och mätdata</li><li data-i18n="contact.fit4">Produktutveckling nära teknisk provning</li></ul></div></aside>
 </section>
-
 </main>
 <footer class="site-footer">
+  <div class="footer-orbit" aria-hidden="true"></div>
   <div class="footer-grid">
     <div>
-      <img class="footer-logo" src="anka-tech-logo.png" alt="ANKA Tech" />
-      <p>Produktutveckling, teknisk problemlösning och verifiering för avancerade fordonsmiljöer.</p>
+      <img class="footer-logo" src="anka-tech-logo.png" alt="ANKA Tech">
+      <p data-i18n="footer.description">Produktutveckling, teknisk problemlösning och verifiering för avancerade fordonsmiljöer.</p>
     </div>
     <div>
-      <h3>Sidor</h3>
-      <div class="footer-links"><a href="index.html">Start</a>
-<a href="tjanster.html">Tjänster</a>
-<a href="partners.html">Partners</a>
-<a href="uppdrag.html">Uppdrag</a>
-<a href="kontakt.html">Kontakt</a></div>
+      <h3 data-i18n="footer.pages">Sidor</h3>
+      <a href="index.html" data-i18n="nav.home">Start</a>
+      <a href="tjanster.html" data-i18n="nav.services">Tjänster</a>
+      <a href="partners.html" data-i18n="nav.partners">Partners</a>
+      <a href="uppdrag.html" data-i18n="nav.assignments">Uppdrag</a>
+      <a href="kontakt.html" data-i18n="nav.contact">Kontakt</a>
     </div>
     <div>
-      <h3>Fokus</h3>
+      <h3 data-i18n="footer.focusTitle">Fokus</h3>
       <p>ADAS · Euro NCAP · Testautomation · GNSS/INS · Mätdata · Verifiering</p>
     </div>
     <div>
-      <h3>Bolag</h3>
-      <p>ANKA Engineering AB<br>Varumärke: ANKA Tech</p>
-      <a href="kontakt.html">Kontakta oss</a>
+      <h3 data-i18n="footer.company">Bolag</h3>
+      <p>ANKA Engineering AB<br><span data-i18n="footer.brand">Varumärke: ANKA Tech</span></p>
+      <a class="footer-pill" href="kontakt.html" data-i18n="footer.contact">Kontakta oss</a>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© <span id="year"></span> ANKA Engineering AB</span>
-    <span>Teknisk konsultverksamhet med fokus på robusta testmiljöer.</span>
+    <span data-i18n="footer.bottom">Teknisk konsultverksamhet med fokus på robusta testmiljöer.</span>
   </div>
 </footer>
 <script src="script.js"></script>
