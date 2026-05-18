@@ -1,36 +1,5 @@
 [
   {
-    "id": "adas-testautomation-2026",
-    "status": "open",
-    "featured": false,
-    "title": {
-      "sv": "ADAS Testautomation Engineer",
-      "en": "ADAS Test Automation Engineer"
-    },
-    "location": {
-      "sv": "Västsverige / hybrid",
-      "en": "West Sweden / hybrid"
-    },
-    "scope": {
-      "sv": "Konsultuppdrag",
-      "en": "Consultant assignment"
-    },
-    "start": {
-      "sv": "Enligt överenskommelse",
-      "en": "By agreement"
-    },
-    "tags": [
-      "ADAS",
-      "Python",
-      "Testautomation",
-      "Mätdata"
-    ],
-    "description": {
-      "sv": "För uppdrag inom fordonsnära testmiljöer söker vi teknisk kompetens inom ADAS, automatiserade testflöden och strukturerad mätdata.",
-      "en": "For assignments in vehicle-adjacent test environments, we are looking for technical competence in ADAS, automated test flows and structured measurement data."
-    }
-  },
-  {
     "id": "gnss-ins-verification-2026",
     "status": "open",
     "featured": true,
