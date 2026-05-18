@@ -72,3 +72,192 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 siteHeader?.classList.add('header-visible');
+
+
+
+// Assignment board + extra translations
+const assignmentTranslations = {
+  sv: {
+    "assignmentsHome.eyebrow":"Aktuella uppdrag",
+    "assignmentsHome.title":"Utvalda uppdrag och konsultmöjligheter.",
+    "assignmentsHome.link":"Se alla uppdrag",
+    "jobs.eyebrow":"Aktuella uppdrag",
+    "jobs.title":"Sök uppdrag som matchar din tekniska profil.",
+    "jobs.lead":"Här publiceras utvalda uppdrag inom ADAS, verifiering, testautomation, mätdata och teknisk problemlösning.",
+    "jobs.spontaneousCta":"Skicka spontanansökan",
+    "jobs.apply":"Ansök till uppdrag",
+    "jobs.readMore":"Visa detaljer",
+    "jobs.noOpen":"Det finns inga publicerade uppdrag just nu. Skicka gärna en spontanansökan så kan vi matcha din profil mot kommande behov.",
+    "jobs.location":"Plats",
+    "jobs.scope":"Omfattning",
+    "jobs.start":"Start",
+    "apply.eyebrow":"Ansök till uppdrag",
+    "apply.title":"Skicka din profil för valt uppdrag.",
+    "apply.lead":"Fyll i formuläret och bifoga CV. Ange gärna tillgänglighet, geografiskt område och relevanta tekniska nyckelkompetenser.",
+    "apply.submit":"Skicka ansökan",
+    "spontaneous.eyebrow":"Spontanansökan",
+    "spontaneous.title":"Är du konsulten vi söker?",
+    "spontaneous.lead":"Skicka in din profil och CV även om inget aktuellt uppdrag passar just nu. Vi matchar din kompetens mot kommande uppdrag inom fordon, provning, automation, mätdata och teknisk utveckling.",
+    "spontaneous.submit":"Skicka spontanansökan",
+    "form.assignment":"Uppdrag",
+    "form.chooseAssignment":"Välj uppdrag",
+    "form.availability":"Tillgänglighet",
+    "form.availabilityPlaceholder":"Ex. omgående, 1 månad, deltid",
+    "form.location":"Geografiskt område",
+    "form.locationPlaceholder":"Ex. Göteborg, Borås, remote",
+    "form.skills":"Tekniska nyckelkompetenser",
+    "form.skillsPlaceholder":"Ex. ADAS, Python, CAN, GNSS/INS, HIL",
+    "form.skillsPlaceholderShort":"Ex. ADAS, Python, verifiering, GNSS/INS",
+    "form.assignmentMessagePlaceholder":"Beskriv kort varför uppdraget passar din profil.",
+    "form.spontaneousMessagePlaceholder":"Berätta kort vilken typ av uppdrag du söker."
+  },
+  en: {
+    "assignmentsHome.eyebrow":"Open assignments",
+    "assignmentsHome.title":"Selected assignments and consultant opportunities.",
+    "assignmentsHome.link":"View all assignments",
+    "jobs.eyebrow":"Open assignments",
+    "jobs.title":"Apply for assignments that match your technical profile.",
+    "jobs.lead":"Selected assignments within ADAS, verification, test automation, measurement data and technical problem solving are published here.",
+    "jobs.spontaneousCta":"Send open application",
+    "jobs.apply":"Apply for assignment",
+    "jobs.readMore":"View details",
+    "jobs.noOpen":"There are no published assignments right now. You are welcome to send an open application so we can match your profile with upcoming needs.",
+    "jobs.location":"Location",
+    "jobs.scope":"Scope",
+    "jobs.start":"Start",
+    "apply.eyebrow":"Apply for assignment",
+    "apply.title":"Send your profile for the selected assignment.",
+    "apply.lead":"Fill in the form and attach your CV. Please include availability, geographic area and relevant technical key skills.",
+    "apply.submit":"Send application",
+    "spontaneous.eyebrow":"Open application",
+    "spontaneous.title":"Are you the consultant we are looking for?",
+    "spontaneous.lead":"Send your profile and CV even if no current assignment fits right now. We match your competence with upcoming assignments in vehicles, testing, automation, measurement data and technical development.",
+    "spontaneous.submit":"Send open application",
+    "form.assignment":"Assignment",
+    "form.chooseAssignment":"Select assignment",
+    "form.availability":"Availability",
+    "form.availabilityPlaceholder":"E.g. immediately, 1 month, part-time",
+    "form.location":"Geographic area",
+    "form.locationPlaceholder":"E.g. Gothenburg, Borås, remote",
+    "form.skills":"Technical key skills",
+    "form.skillsPlaceholder":"E.g. ADAS, Python, CAN, GNSS/INS, HIL",
+    "form.skillsPlaceholderShort":"E.g. ADAS, Python, verification, GNSS/INS",
+    "form.assignmentMessagePlaceholder":"Briefly describe why the assignment matches your profile.",
+    "form.spontaneousMessagePlaceholder":"Briefly describe what type of assignment you are looking for."
+  }
+};
+
+Object.keys(assignmentTranslations).forEach(lang => {
+  translations[lang] = {...translations[lang], ...assignmentTranslations[lang]};
+});
+
+function currentLang(){
+  return localStorage.getItem('ankaLang') || 'sv';
+}
+
+function translateLabels(){
+  const dict = translations[currentLang()] || translations.sv;
+  document.querySelectorAll('[data-i18n-label]').forEach(label => {
+    const key = label.dataset.i18nLabel;
+    if (!dict[key]) return;
+    const nodes = Array.from(label.childNodes);
+    const textNode = nodes.find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+    if (textNode) {
+      textNode.textContent = dict[key] + ' ';
+    } else {
+      label.insertBefore(document.createTextNode(dict[key] + ' '), label.firstChild);
+    }
+  });
+}
+
+function assignmentText(value, lang){
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value[lang] || value.sv || value.en || "";
+}
+
+function openAssignments(){
+  return (window.ANKA_ASSIGNMENTS || []).filter(item => item.status !== "closed");
+}
+
+function renderAssignmentCard(item, compact=false){
+  const lang = currentLang();
+  const title = assignmentText(item.title, lang);
+  const location = assignmentText(item.location, lang);
+  const scope = assignmentText(item.scope, lang);
+  const start = assignmentText(item.start, lang);
+  const description = assignmentText(item.description, lang);
+  const dict = translations[lang] || translations.sv;
+
+  return `
+    <article class="${compact ? 'assignment-mini-card' : 'assignment-card'}">
+      <h3>${title}</h3>
+      <div class="assignment-meta">
+        <span>${dict["jobs.location"]}: ${location}</span>
+        <span>${dict["jobs.scope"]}: ${scope}</span>
+        <span>${dict["jobs.start"]}: ${start}</span>
+      </div>
+      <p>${description}</p>
+      <div class="assignment-tags">${(item.tags || []).map(tag => `<span>${tag}</span>`).join("")}</div>
+      <div class="assignment-actions">
+        <a class="assignment-apply-link" href="uppdrag.html#ansok" data-assignment-id="${item.id}">${dict["jobs.apply"]}</a>
+        ${compact ? `<a class="assignment-secondary-link" href="uppdrag.html">${dict["jobs.readMore"]}</a>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function renderAssignments(){
+  const lang = currentLang();
+  const dict = translations[lang] || translations.sv;
+  const assignments = openAssignments();
+
+  const list = document.querySelector('[data-assignment-list]');
+  if (list) {
+    list.innerHTML = assignments.length
+      ? assignments.map(item => renderAssignmentCard(item, false)).join("")
+      : `<div class="assignment-empty">${dict["jobs.noOpen"]}</div>`;
+  }
+
+  const featured = document.querySelector('[data-featured-assignments]');
+  if (featured) {
+    const items = assignments.filter(item => item.featured).slice(0, 2);
+    featured.innerHTML = items.length
+      ? items.map(item => renderAssignmentCard(item, true)).join("")
+      : `<div class="assignment-empty">${dict["jobs.noOpen"]}</div>`;
+  }
+
+  const select = document.querySelector('[data-assignment-select]');
+  if (select) {
+    const selected = select.value;
+    select.innerHTML = `<option value="">${dict["form.chooseAssignment"]}</option>` +
+      assignments.map(item => {
+        const title = assignmentText(item.title, lang);
+        return `<option value="${title}">${title}</option>`;
+      }).join("");
+    if (selected) select.value = selected;
+  }
+
+  document.querySelectorAll('[data-assignment-id]').forEach(link => {
+    link.addEventListener('click', () => {
+      const item = assignments.find(a => a.id === link.dataset.assignmentId);
+      const select = document.querySelector('[data-assignment-select]');
+      if (item && select) {
+        const title = assignmentText(item.title, currentLang());
+        setTimeout(() => { select.value = title; }, 100);
+      }
+    });
+  });
+}
+
+const originalApplyLang = applyLang;
+applyLang = function(lang){
+  originalApplyLang(lang);
+  translateLabels();
+  renderAssignments();
+};
+
+translateLabels();
+renderAssignments();
+
+applyLang(localStorage.getItem('ankaLang') || 'sv');

@@ -45,3 +45,61 @@ Headern ligger nu alltid över innehållet och är klickbar. Den försvinner aut
 ## UI-fixar
 - Logoväggen i sektionen med partners/tekniskt sammanhang har fått tydligare luft så rubriken inte hamnar över loggorna.
 - Språkväljaren är omgjord till en tydligare tvåläges-switch med separata knappar för SV och EN.
+
+## Uppdrag och ansökningar
+
+Den här versionen har en enkel uppdragsmodul.
+
+### Lägga till uppdrag
+Öppna filen `assignments-data.js`.
+
+Kopiera ett befintligt uppdrag och ändra:
+- `id`
+- `title`
+- `location`
+- `scope`
+- `start`
+- `tags`
+- `description`
+- `featured: true` om uppdraget ska synas på startsidan
+- `status: "open"` för aktivt uppdrag
+
+Spara filen och ladda upp sidan igen.
+
+### Ansökningsformulär
+På sidan `uppdrag.html` finns:
+- formulär för att söka ett specifikt uppdrag
+- formulär för spontanansökan med CV
+
+Byt `REPLACE_WITH_YOUR_EMAIL` i `uppdrag.html` till rätt e-postadress.
+Samma sak gäller kontaktformuläret i `kontakt.html`.
+
+### Viktigt
+Detta är en statisk lösning. För att lägga upp uppdrag via ett admin-gränssnitt behövs senare en backend eller CMS, till exempel:
+- Netlify CMS / Decap CMS
+- Sanity
+- WordPress headless
+- Supabase
+- egen adminpanel
+
+## Getform
+
+Alla formulär är nu kopplade till samma Getform-endpoint:
+
+`https://getform.io/f/9yi31ff8imi`
+
+Fältnamnen följer samma struktur som i kontaktformuläret:
+- `fi-sender-fullName`
+- `fi-sender-phone`
+- `fi-sender-email`
+- `fi-text-bolag`
+- `fi-file-bilaga`
+- `fi-textarea-meddelande`
+- `fi-text-samtycke`
+
+Uppdrags- och spontanansökningsformulären använder samma endpoint och har extra fält som:
+- `fi-text-formulartyp`
+- `fi-text-uppdrag`
+- `fi-text-tillganglighet`
+- `fi-text-geografiskt-omrade`
+- `fi-text-kompetenser`

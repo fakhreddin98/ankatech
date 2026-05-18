@@ -37,14 +37,13 @@
   <p data-i18n="contact.lead">Beskriv uppdraget, systemmiljön eller frågan. Formuläret är byggt för både uppdragsgivare och uppdragstagare.</p>
 </section>
 <section class="section contact-layout">
-  <form class="contact-form reveal" action="https://formsubmit.co/REPLACE_WITH_YOUR_EMAIL" method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="_subject" value="Ny kontaktförfrågan via ANKA Tech"><input type="hidden" name="_captcha" value="false"><input type="hidden" name="_template" value="table">
-    <label><span data-i18n="form.role">Kontaktroll</span><select name="Kontaktroll" required><option value="" data-i18n="form.chooseRole">Välj roll</option><option data-i18n="form.contractor">Uppdragstagare</option><option data-i18n="form.client">Uppdragsgivare</option></select></label>
-    <div class="form-grid"><label><span data-i18n="form.name">Namn</span><input type="text" name="Namn" autocomplete="name" required></label><label><span data-i18n="form.phone">Telefonnummer</span><input type="tel" name="Telefonnummer" autocomplete="tel"></label><label><span data-i18n="form.email">E-post</span><input type="email" name="E-post" autocomplete="email" required></label><label><span data-i18n="form.company">Bolag / organisation</span><input type="text" name="Bolag"></label></div>
-    <label><span data-i18n="form.address">Adress</span><input type="text" name="Adress" autocomplete="street-address"></label>
-    <label><span data-i18n="form.attachment">Bilaga / CV</span><input type="file" name="Bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
-    <label><span data-i18n="form.message">Meddelande</span><textarea name="Meddelande" rows="7" required data-i18n-placeholder="form.messagePlaceholder" placeholder="Beskriv uppdraget, testmiljön, tidsplanen eller vilken typ av stöd du söker."></textarea></label>
-    <label class="consent"><input type="checkbox" name="Samtycke" required><span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span></label>
+  <form class="contact-form reveal" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
+    <label><span data-i18n="form.role">Kontaktroll</span><select name="fi-text-kontaktroll" required><option value="" data-i18n="form.chooseRole">Välj roll</option><option data-i18n="form.contractor">Uppdragstagare</option><option data-i18n="form.client">Uppdragsgivare</option></select></label>
+    <div class="form-grid"><label><span data-i18n="form.name">Namn</span><input type="text" name="fi-sender-fullName" autocomplete="name" required></label><label><span data-i18n="form.phone">Telefonnummer</span><input type="tel" name="fi-sender-phone" autocomplete="tel"></label><label><span data-i18n="form.email">E-post</span><input type="email" name="fi-sender-email" autocomplete="email" required></label><label><span data-i18n="form.company">Bolag / organisation</span><input type="text" name="fi-text-bolag"></label></div>
+    <label><span data-i18n="form.address">Adress</span><input type="text" name="fi-text-adress" autocomplete="street-address"></label>
+    <label><span data-i18n="form.attachment">Bilaga / CV</span><input type="file" name="fi-file-bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
+    <label><span data-i18n="form.message">Meddelande</span><textarea name="fi-textarea-meddelande" rows="7" required data-i18n-placeholder="form.messagePlaceholder" placeholder="Beskriv uppdraget, testmiljön, tidsplanen eller vilken typ av stöd du söker."></textarea></label>
+    <label class="consent"><input type="checkbox" name="fi-text-samtycke" required><span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span></label>
     <button class="button primary magnetic" type="submit" data-i18n="form.submit">Skicka förfrågan</button>
     <p class="form-note" data-i18n="form.note">Byt ut REPLACE_WITH_YOUR_EMAIL mot mottagarens e-postadress innan publicering.</p>
   </form>
@@ -81,6 +80,7 @@
     <span data-i18n="footer.bottom">Teknisk konsultverksamhet med fokus på robusta testmiljöer.</span>
   </div>
 </footer>
+<script src="assignments-data.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
