@@ -103,3 +103,9 @@ Uppdrags- och spontanansökningsformulären använder samma endpoint och har ext
 - `fi-text-tillganglighet`
 - `fi-text-geografiskt-omrade`
 - `fi-text-kompetenser`
+
+## Formulärnotis borttagen
+
+Den synliga texten om `REPLACE_WITH_YOUR_EMAIL` är borttagen eftersom formulären redan använder Getform-endpointen:
+
+`https://getform.io/f/9yi31ff8imi`
