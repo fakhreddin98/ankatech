@@ -46,3 +46,8 @@ Fältnamn följer samma struktur som ditt kontaktformulär, exempel:
 - `fi-file-bilaga`
 - `fi-textarea-meddelande`
 - `fi-text-samtycke`
+
+## Pages CMS-fix
+
+Den här versionen fixar ett Pages CMS-fel där en `description` i `.pages.yml` innehöll kolon utan citattecken.
+Det kunde göra att Pages CMS tolkade texten som ett objekt och gav React error #31.
