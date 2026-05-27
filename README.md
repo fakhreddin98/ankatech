@@ -61,3 +61,19 @@ Det kunde göra att Pages CMS tolkade texten som ett objekt och gav React error 
   - `assets/visuals/`
 - Partnersidan är omformulerad till ett mer professionellt "tekniskt sammanhang" där logotyperna beskriver relevanta produkter, plattformar, organisationer och miljöer som ANKA Tech har arbetat med, haft kontakt med eller byggt erfarenhet kring.
 - Filen `partners.h` är korrigerad till `partners.html`.
+
+## Viktigt om Pages CMS
+
+Pages CMS kräver att filen `.pages.yml` finns direkt i repository-roten.
+
+Om du laddar upp filer manuellt från datorn kan dolda filer som börjar med punkt ibland missas. Om Pages CMS visar:
+
+`Configuration not found`
+
+kontrollera i GitHub att filen `.pages.yml` verkligen finns i roten, på samma nivå som `index.html`.
+
+I denna zip finns också `PAGES_CMS_CONFIG_COPY.yml` som synlig kopia. Om `.pages.yml` saknas i GitHub:
+1. Skapa en ny fil i GitHub som heter exakt `.pages.yml`
+2. Kopiera innehållet från `PAGES_CMS_CONFIG_COPY.yml`
+3. Commit
+4. Öppna Pages CMS igen
