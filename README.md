@@ -77,3 +77,14 @@ I denna zip finns också `PAGES_CMS_CONFIG_COPY.yml` som synlig kopia. Om `.page
 2. Kopiera innehållet från `PAGES_CMS_CONFIG_COPY.yml`
 3. Commit
 4. Öppna Pages CMS igen
+
+## Dark premium theme
+
+Den här versionen har ett mörkare, mer tekniskt premiumtema med:
+- mörk bakgrund och tekniskt rutnät
+- starkare turkos accent
+- mer glassmorphism
+- animerade radar-/signal-linjer
+- rörliga noder
+- subtil 3D-hover på kort och hero
+- bättre kontrast i header, formulär och sektioner

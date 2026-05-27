@@ -309,3 +309,32 @@ async function loadCmsAssignments(){
   }
 }
 loadCmsAssignments();
+
+
+
+// Premium dark motion details
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    ['node-a','node-b','node-c'].forEach(cls => {
+      const node = document.createElement('span');
+      node.className = `motion-node ${cls}`;
+      node.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(node);
+    });
+  }
+
+  const tiltItems = document.querySelectorAll('.hero-stage, .tech-card, .assignment-card, .assignment-mini-card, .experience-grid article, .admin-card');
+  tiltItems.forEach(item => {
+    item.addEventListener('mousemove', (event) => {
+      const rect = item.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const rx = ((y / rect.height) - 0.5) * -5;
+      const ry = ((x / rect.width) - 0.5) * 5;
+      item.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+    });
+    item.addEventListener('mouseleave', () => {
+      item.style.transform = '';
+    });
+  });
+});

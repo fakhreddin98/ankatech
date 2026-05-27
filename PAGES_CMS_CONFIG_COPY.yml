@@ -1,0 +1,115 @@
+# Kopia av .pages.yml. Pages CMS använder filen .pages.yml i repo-roten.
+# Om Pages CMS säger configuration not found, skapa/ladda upp .pages.yml med innehållet nedan.
+
+media:
+  input: assets
+  output: /assets
+
+content:
+  - name: assignments
+    label: Uppdrag
+    type: file
+    path: content/assignments.json
+    format: json
+    list: true
+    fields:
+      - name: id
+        label: ID
+        type: string
+        required: true
+        description: "Unikt ID utan åäö, mellanslag eller specialtecken. Exempel: adas-engineer-2026."
+      - name: status
+        label: Status
+        type: select
+        required: true
+        options:
+          values:
+            - value: open
+              label: Öppet
+            - value: closed
+              label: Stängt
+      - name: featured
+        label: Visa på startsidan
+        type: boolean
+        default: false
+      - name: title
+        label: Titel
+        type: object
+        fields:
+          - name: sv
+            label: Titel svenska
+            type: string
+            required: true
+          - name: en
+            label: Titel engelska
+            type: string
+            required: true
+      - name: location
+        label: Plats
+        type: object
+        fields:
+          - name: sv
+            label: Plats svenska
+            type: string
+          - name: en
+            label: Plats engelska
+            type: string
+      - name: scope
+        label: Omfattning
+        type: object
+        fields:
+          - name: sv
+            label: Omfattning svenska
+            type: string
+          - name: en
+            label: Omfattning engelska
+            type: string
+      - name: start
+        label: Start
+        type: object
+        fields:
+          - name: sv
+            label: Start svenska
+            type: string
+          - name: en
+            label: Start engelska
+            type: string
+      - name: tags
+        label: Taggar
+        type: string
+        list: true
+      - name: description
+        label: Beskrivning
+        type: object
+        fields:
+          - name: sv
+            label: Beskrivning svenska
+            type: text
+            required: true
+          - name: en
+            label: Beskrivning engelska
+            type: text
+            required: true
+
+  - name: site
+    label: Grundinställningar
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: company
+        label: Juridiskt bolag
+        type: string
+      - name: brand
+        label: Varumärke
+        type: string
+      - name: contact
+        label: Kontaktformulär
+        type: object
+        fields:
+          - name: formEndpoint
+            label: Getform endpoint
+            type: string
+
+settings:
+  hide: false
