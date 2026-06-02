@@ -1,5 +1,5 @@
-# Kopia av .pages.yml. Pages CMS använder filen .pages.yml i repo-roten.
-# Om Pages CMS säger configuration not found, skapa/ladda upp .pages.yml med innehållet nedan.
+# Pages CMS – ANKA Tech
+# Konfigurera detta i repo-roten. Logga in på app.pagescms.org med GitHub.
 
 media:
   input: assets
@@ -7,109 +7,199 @@ media:
 
 content:
   - name: assignments
-    label: Uppdrag
+    label: "Uppdrag / Annonser"
     type: file
     path: content/assignments.json
     format: json
     list: true
     fields:
+
+      # ── Identitet & status ──────────────────────────────────────
       - name: id
-        label: ID
+        label: "Unikt ID"
         type: string
         required: true
-        description: "Unikt ID utan åäö, mellanslag eller specialtecken. Exempel: adas-engineer-2026."
+        description: "Slug utan åäö eller mellanslag. Ex: adas-engineer-2026"
+
       - name: status
-        label: Status
+        label: "Status"
         type: select
         required: true
         options:
           values:
             - value: open
-              label: Öppet
+              label: "Öppen"
             - value: closed
-              label: Stängt
+              label: "Stängd"
+
       - name: featured
-        label: Visa på startsidan
+        label: "Visa på startsidan"
         type: boolean
         default: false
+
+      # ── Titel & rollbeskrivning ─────────────────────────────────
       - name: title
-        label: Titel
+        label: "Annonstitel"
         type: object
         fields:
-          - name: sv
-            label: Titel svenska
-            type: string
-            required: true
-          - name: en
-            label: Titel engelska
-            type: string
-            required: true
+          - { name: sv, label: "Titel (SV)", type: string, required: true }
+          - { name: en, label: "Title (EN)", type: string }
+
+      - name: role
+        label: "Roll / Befattning"
+        type: object
+        fields:
+          - { name: sv, label: "Roll (SV)", type: string }
+          - { name: en, label: "Role (EN)", type: string }
+
+      - name: seniority
+        label: "Erfarenhetsnivå"
+        type: select
+        options:
+          values:
+            - { value: Junior, label: Junior }
+            - { value: Mid, label: Mid }
+            - { value: Senior, label: Senior }
+            - { value: Lead, label: Lead }
+
+      # ── Plats & form ────────────────────────────────────────────
       - name: location
-        label: Plats
+        label: "Plats"
         type: object
         fields:
-          - name: sv
-            label: Plats svenska
-            type: string
-          - name: en
-            label: Plats engelska
-            type: string
+          - { name: sv, label: "Plats (SV)", type: string }
+          - { name: en, label: "Location (EN)", type: string }
+
+      - name: remote
+        label: "Remote-andel"
+        type: select
+        options:
+          values:
+            - { value: "0%",   label: "0% – Ej remote" }
+            - { value: "25%",  label: "25%" }
+            - { value: "50%",  label: "50%" }
+            - { value: "75%",  label: "75%" }
+            - { value: "100%", label: "100% – Helt remote" }
+
       - name: scope
-        label: Omfattning
+        label: "Uppdragsform"
         type: object
         fields:
-          - name: sv
-            label: Omfattning svenska
-            type: string
-          - name: en
-            label: Omfattning engelska
-            type: string
+          - { name: sv, label: "Uppdragsform (SV)", type: string }
+          - { name: en, label: "Assignment type (EN)", type: string }
+
+      # ── Tidsplan ────────────────────────────────────────────────
+      - name: period_start
+        label: "Startdatum"
+        type: date
+        description: "ISO-format: ÅÅÅÅ-MM-DD"
+
+      - name: period_end
+        label: "Slutdatum (estimerat)"
+        type: date
+
+      - name: deadline
+        label: "Ansökningsdeadline"
+        type: date
+
       - name: start
-        label: Start
+        label: "Starttext (fritext)"
+        type: object
+        description: "Visas i kortets meta-rad. Ex: '15 jun 2026'"
+        fields:
+          - { name: sv, label: "Start (SV)", type: string }
+          - { name: en, label: "Start (EN)", type: string }
+
+      # ── Kommersiellt ────────────────────────────────────────────
+      - name: rate
+        label: "Arvode"
         type: object
         fields:
-          - name: sv
-            label: Start svenska
-            type: string
-          - name: en
-            label: Start engelska
-            type: string
-      - name: tags
-        label: Taggar
+          - { name: sv, label: "Arvode (SV)", type: string, description: "Ex: upp till 580 SEK/h" }
+          - { name: en, label: "Rate (EN)",   type: string, description: "Ex: up to 580 SEK/h" }
+
+      - name: client
+        label: "Kund / Förmedlare"
+        type: string
+        description: "Ex: Ework Group AB"
+
+      - name: hours_per_week
+        label: "Timmar per vecka"
+        type: number
+
+      # ── Ingress (kort) ──────────────────────────────────────────
+      - name: description
+        label: "Kort sammanfattning (visas på kortet)"
+        type: object
+        fields:
+          - { name: sv, label: "Sammanfattning (SV)", type: text, required: true }
+          - { name: en, label: "Summary (EN)",         type: text }
+
+      # ── Strukturerade sektioner ─────────────────────────────────
+      - name: sections
+        label: "Innehållssektioner"
+        type: object
+        list: true
+        fields:
+          - name: heading
+            label: "Rubrik"
+            type: object
+            fields:
+              - { name: sv, label: "Rubrik (SV)", type: string }
+              - { name: en, label: "Heading (EN)", type: string }
+          - name: body
+            label: "Brödtext"
+            type: object
+            fields:
+              - { name: sv, label: "Text (SV)", type: text }
+              - { name: en, label: "Body (EN)", type: text }
+
+      # ── Kompetenser ─────────────────────────────────────────────
+      - name: required_skills
+        label: "Obligatoriska kompetenser"
         type: string
         list: true
-      - name: description
-        label: Beskrivning
-        type: object
-        fields:
-          - name: sv
-            label: Beskrivning svenska
-            type: text
-            required: true
-          - name: en
-            label: Beskrivning engelska
-            type: text
-            required: true
+        description: "En kompetens per rad. Ex: GNSS/INS"
 
+      - name: preferred_skills
+        label: "Meriterande kompetenser"
+        type: string
+        list: true
+
+      # ── Språk ───────────────────────────────────────────────────
+      - name: languages
+        label: "Språkkrav"
+        type: object
+        list: true
+        fields:
+          - { name: name, label: "Språk",   type: string }
+          - name: level
+            label: "Nivå"
+            type: object
+            fields:
+              - { name: sv, label: "Nivå (SV)", type: string }
+              - { name: en, label: "Level (EN)", type: string }
+
+      # ── Taggar ──────────────────────────────────────────────────
+      - name: tags
+        label: "Taggar (för filtrering)"
+        type: string
+        list: true
+
+  # ── Grundinställningar ─────────────────────────────────────────
   - name: site
-    label: Grundinställningar
+    label: "Grundinställningar"
     type: file
     path: content/site.json
     format: json
     fields:
-      - name: company
-        label: Juridiskt bolag
-        type: string
-      - name: brand
-        label: Varumärke
-        type: string
+      - { name: company, label: "Juridiskt bolag",  type: string }
+      - { name: brand,   label: "Varumärke",         type: string }
       - name: contact
-        label: Kontaktformulär
+        label: "Kontaktformulär"
         type: object
         fields:
-          - name: formEndpoint
-            label: Getform endpoint
-            type: string
+          - { name: formEndpoint, label: "Getform endpoint", type: string }
 
 settings:
   hide: false
