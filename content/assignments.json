@@ -1,35 +1,40 @@
 [
   {
-    "id": "Testingenjör",
+    "id": "gnss-ins-verification-2026",
     "status": "open",
     "featured": true,
     "title": {
-      "sv": "Testingenjör",
-      "en": "Testingenjör"
+      "sv": "Verifieringsingenjör inom GNSS/INS",
+      "en": "Verification Engineer – GNSS/INS"
     },
     "role": {
       "sv": "Testingenjör",
       "en": "Test Engineer"
     },
-    "seniority": "Mid",
+    "seniority": "Senior",
     "location": {
       "sv": "Göteborg (SE)",
       "en": "Gothenburg (SE)"
     },
     "remote": "0%",
+    "period_start": "2026-06-15",
+    "period_end": "2026-11-12",
+    "deadline": "2026-06-08",
+    "rate": {
+      "sv": "upp till 580 SEK/h",
+      "en": "up to 580 SEK/h"
+    },
+    "client": "Ework Group AB",
+    "hours_per_week": 40,
     "scope": {
       "sv": "Projekt- eller specialistinsats",
       "en": "Project or specialist support"
     },
-    "period_start": "2026-06-15",
-    "period_end": "2026-11-12",
-    "deadline": "2026-06-08",
     "start": {
       "sv": "15 jun 2026",
       "en": "15 Jun 2026"
     },
-    "client": "Ework Group AB",
-    "hours_per_week": 40,
+    "tags": ["GNSS/INS", "Verifiering", "Fordonsprovning", "Dataanalys"],
     "description": {
       "sv": "Teknisk roll för dig som kan arbeta nära mätdata, positionering, provning och verifiering i avancerade fordonsmiljöer.",
       "en": "A technical role for someone who can work close to measurement data, positioning, testing and verification in advanced vehicle environments."
@@ -76,24 +81,12 @@
     "languages": [
       {
         "name": "Svenska",
-        "level": {
-          "sv": "Nativ",
-          "en": "Native"
-        }
+        "level": { "sv": "Nativ", "en": "Native" }
       },
       {
         "name": "Engelska",
-        "level": {
-          "sv": "Avancerad (krav)",
-          "en": "Advanced (mandatory)"
-        }
+        "level": { "sv": "Avancerad (krav)", "en": "Advanced (mandatory)" }
       }
-    ],
-    "tags": [
-      "GNSS/INS",
-      "Verifiering",
-      "Fordonsprovning",
-      "Dataanalys"
     ]
   }
 ]
