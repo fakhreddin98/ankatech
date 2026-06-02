@@ -212,29 +212,101 @@ function openAssignments(){
 
 function renderAssignmentCard(item, compact=false){
   const lang = currentLang();
-  const title = assignmentText(item.title, lang);
-  const location = assignmentText(item.location, lang);
-  const scope = assignmentText(item.scope, lang);
-  const start = assignmentText(item.start, lang);
+  const title       = assignmentText(item.title, lang);
+  const location    = assignmentText(item.location, lang);
+  const scope       = assignmentText(item.scope, lang);
+  const start       = assignmentText(item.start, lang);
   const description = assignmentText(item.description, lang);
   const dict = translations[lang] || translations.sv;
 
+  const detailUrl = `uppdrag-detalj.html?id=${item.id}`;
+
+  // Deadline badge
+  let deadlineBadge = "";
+  if (item.deadline) {
+    const days = Math.ceil((new Date(item.deadline + "T23:59:59") - new Date()) / 86400000);
+    if (days >= 0 && days <= 14) {
+      deadlineBadge = `<span class="ac-deadline-badge">${days} ${lang === "en" ? "days left" : "dagar kvar"}</span>`;
+    }
+  }
+
+  if (compact) {
+    return `
+      <article class="assignment-mini-card">
+        <div class="ac-badges">
+          <span class="ac-badge ac-badge-open">${lang === "en" ? "Open" : "Öppet"}</span>
+          ${item.seniority ? `<span class="ac-badge ac-badge-seniority">${item.seniority}</span>` : ""}
+          ${deadlineBadge}
+        </div>
+        <h3>${title}</h3>
+        ${item.role ? `<p class="ac-role">${assignmentText(item.role, lang)}</p>` : ""}
+        <div class="ac-meta-strip">
+          ${location ? `<span>📍 ${location}</span>` : ""}
+          ${item.remote !== undefined ? `<span>${item.remote} remote</span>` : ""}
+          ${start ? `<span>Start: ${start}</span>` : ""}
+        </div>
+        <p class="ac-description">${description}</p>
+        <div class="assignment-tags">${(item.tags || []).map(tag => `<span>${tag}</span>`).join("")}</div>
+        <div class="assignment-actions">
+          <a class="assignment-apply-link" href="${detailUrl}#ansok">${dict["jobs.apply"]}</a>
+          <a class="assignment-secondary-link" href="${detailUrl}">${dict["jobs.readMore"]}</a>
+        </div>
+      </article>`;
+  }
+
+  // Full card (list view)
+  const sectionsHTML = (item.sections || []).length
+    ? `<div class="ac-sections">${item.sections.slice(0, 1).map(s =>
+        `<div class="ac-section-block">
+          <h4 class="ac-section-heading">${assignmentText(s.heading, lang)}</h4>
+          <div class="ac-section-body">${assignmentText(s.body, lang).replace(/\n\n/g,"</p><p>").replace(/\n/g,"<br>").replace(/^/,"<p>").replace(/$/,"</p>")}</div>
+        </div>`).join("")}</div>`
+    : `<p class="ac-description">${description}</p>`;
+
+  const requiredHTML = (item.required_skills || []).length
+    ? `<div class="ac-skills-block">
+        <span class="ac-skills-label">${lang === "en" ? "Required skills" : "Obligatoriska kompetenser"}</span>
+        <div class="assignment-tags">${item.required_skills.map(s => `<span class="ac-skill-req">${s}</span>`).join("")}</div>
+      </div>` : "";
+
+  const preferredHTML = (item.preferred_skills || []).length
+    ? `<div class="ac-skills-block">
+        <span class="ac-skills-label">${lang === "en" ? "Preferred" : "Meriterande"}</span>
+        <div class="assignment-tags">${item.preferred_skills.map(s => `<span>${s}</span>`).join("")}</div>
+      </div>` : "";
+
+  const metaGrid = `
+    <div class="ac-meta-grid">
+      ${item.role ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Role" : "Roll"}</span><span class="ac-meta-val">${assignmentText(item.role, lang)}</span></div>` : ""}
+      ${item.seniority ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Seniority" : "Nivå"}</span><span class="ac-meta-val">${item.seniority}</span></div>` : ""}
+      ${location ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Location" : "Plats"}</span><span class="ac-meta-val">${location}</span></div>` : ""}
+      ${item.remote !== undefined ? `<div class="ac-meta-cell"><span class="ac-meta-key">Remote</span><span class="ac-meta-val">${item.remote}</span></div>` : ""}
+      ${scope ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Type" : "Uppdragsform"}</span><span class="ac-meta-val">${scope}</span></div>` : ""}
+      ${start ? `<div class="ac-meta-cell"><span class="ac-meta-key">Start</span><span class="ac-meta-val">${start}</span></div>` : ""}
+      ${item.rate ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Rate" : "Arvode"}</span><span class="ac-meta-val">${assignmentText(item.rate, lang)}</span></div>` : ""}
+      ${item.client ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Client" : "Kund"}</span><span class="ac-meta-val">${item.client}</span></div>` : ""}
+    </div>`;
+
   return `
-    <article class="${compact ? 'assignment-mini-card' : 'assignment-card'}">
-      <h3>${title}</h3>
-      <div class="assignment-meta">
-        <span>${dict["jobs.location"]}: ${location}</span>
-        <span>${dict["jobs.scope"]}: ${scope}</span>
-        <span>${dict["jobs.start"]}: ${start}</span>
+    <article class="assignment-card ac-full-card">
+      <div class="ac-card-header">
+        <div class="ac-badges">
+          <span class="ac-badge ac-badge-open">${lang === "en" ? "Open" : "Öppet"}</span>
+          ${item.seniority ? `<span class="ac-badge ac-badge-seniority">${item.seniority}</span>` : ""}
+          ${deadlineBadge}
+        </div>
+        <h3>${title}</h3>
+        ${item.role ? `<p class="ac-role">${assignmentText(item.role, lang)}</p>` : ""}
       </div>
-      <p>${description}</p>
-      <div class="assignment-tags">${(item.tags || []).map(tag => `<span>${tag}</span>`).join("")}</div>
+      ${metaGrid}
+      ${sectionsHTML}
+      ${requiredHTML}
+      ${preferredHTML}
       <div class="assignment-actions">
-        <a class="assignment-apply-link" href="uppdrag.html#ansok" data-assignment-id="${item.id}">${dict["jobs.apply"]}</a>
-        ${compact ? `<a class="assignment-secondary-link" href="uppdrag.html">${dict["jobs.readMore"]}</a>` : ""}
+        <a class="assignment-apply-link" href="${detailUrl}#ansok">${dict["jobs.apply"]}</a>
+        <a class="assignment-secondary-link" href="${detailUrl}">${lang === "en" ? "Full details →" : "Fullständig annons →"}</a>
       </div>
-    </article>
-  `;
+    </article>`;
 }
 
 function renderAssignments(){
