@@ -1,0 +1,18 @@
+[
+  {
+    "id": "Test",
+    "status": "open",
+    "featured": false,
+    "title": {
+      "sv": "Test",
+      "en": "Test"
+    },
+    "role": {
+      "sv": "Test",
+      "en": "Test"
+    },
+    "period_start": "2026-06-23",
+    "period_end": "2026-06-23",
+    "deadline": "2026-06-23"
+  }
+]
