@@ -44,6 +44,7 @@
         <option value="">Välj ärende</option>
         <option value="Allmän förfrågan">Allmän förfrågan</option>
         <option value="Publicerat uppdrag">Ett publicerat uppdrag</option>
+        <option value="Spontanansökan">Spontanansökan</option>
       </select>
     </label>
     <div id="contact-assignment-field" hidden>
@@ -56,7 +57,8 @@
     </div>
     <div class="form-grid"><label><span data-i18n="form.name">Namn</span><input type="text" name="fi-sender-fullName" autocomplete="name" required></label><label><span data-i18n="form.phone">Telefonnummer</span><input type="tel" name="fi-sender-phone" autocomplete="tel"></label><label><span data-i18n="form.email">E-post</span><input type="email" name="fi-sender-email" autocomplete="email" required></label><label><span data-i18n="form.company">Bolag / organisation</span><input type="text" name="fi-text-bolag"></label></div>
     <label><span data-i18n="form.address">Adress</span><input type="text" name="fi-text-adress" autocomplete="street-address"></label>
-    <label><span data-i18n="form.attachment">Bilaga / CV</span><input type="file" name="fi-file-bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
+    <div id="contact-skills-field" hidden><label><span id="contact-skills-label">Tekniska nyckelkompetenser</span><input type="text" name="fi-text-kompetenser"></label></div>
+    <label><span id="contact-attachment-label" data-i18n="form.attachment">Bilaga / CV</span><input id="contact-attachment" type="file" name="fi-file-bilaga" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
     <label><span data-i18n="form.message">Meddelande</span><textarea name="fi-textarea-meddelande" rows="7" required data-i18n-placeholder="form.messagePlaceholder" placeholder="Beskriv uppdraget, testmiljön, tidsplanen eller vilken typ av stöd du söker."></textarea></label>
     <label class="consent"><input type="checkbox" name="fi-text-samtycke" required><span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span></label>
     <button class="button primary magnetic" type="submit" data-i18n="form.submit">Skicka förfrågan</button>
@@ -103,13 +105,19 @@
   const field = document.getElementById('contact-assignment-field');
   const assignment = document.getElementById('contact-assignment');
   const help = document.getElementById('contact-assignment-help');
+  const role = document.querySelector('[name="fi-text-kontaktroll"]');
+  const formType = document.querySelector('[name="fi-text-formulartyp"]');
+  const skillsField = document.getElementById('contact-skills-field');
+  const attachment = document.getElementById('contact-attachment');
+  const message = document.querySelector('[name="fi-textarea-meddelande"]');
+  const submit = topic.form.querySelector('[type="submit"]');
   let available = [];
   let loading = true;
   let loadFailed = false;
   const lang = () => localStorage.getItem('ankaLang') === 'en' ? 'en' : 'sv';
   const labels = {
-    sv: {topic:'Vad gäller ditt meddelande?', chooseTopic:'Välj ärende', general:'Allmän förfrågan', published:'Ett publicerat uppdrag', assignment:'Vilket uppdrag gäller det?', choose:'Välj uppdrag', loading:'Hämtar publicerade uppdrag…', empty:'Det finns inga publicerade uppdrag just nu. Välj allmän förfrågan om du vill kontakta oss ändå.', error:'Uppdragen kunde inte hämtas. Försök igen senare eller välj allmän förfrågan.'},
-    en: {topic:'What is your message about?', chooseTopic:'Select a topic', general:'General enquiry', published:'A published assignment', assignment:'Which assignment is this about?', choose:'Select assignment', loading:'Loading published assignments…', empty:'There are no published assignments right now. Select general enquiry to contact us.', error:'Assignments could not be loaded. Try again later or select general enquiry.'}
+    sv: {topic:'Vad gäller ditt meddelande?', chooseTopic:'Välj ärende', general:'Allmän förfrågan', published:'Ett publicerat uppdrag', spontaneous:'Spontanansökan', skills:'Tekniska nyckelkompetenser', cv:'CV (obligatoriskt)', applicationMessage:'Berätta kort vilken typ av uppdrag du söker och när du är tillgänglig.', sendApplication:'Skicka spontanansökan', assignment:'Vilket uppdrag gäller det?', choose:'Välj uppdrag', loading:'Hämtar publicerade uppdrag…', empty:'Det finns inga publicerade uppdrag just nu. Välj allmän förfrågan om du vill kontakta oss ändå.', error:'Uppdragen kunde inte hämtas. Försök igen senare eller välj allmän förfrågan.'},
+    en: {topic:'What is your message about?', chooseTopic:'Select a topic', general:'General enquiry', published:'A published assignment', spontaneous:'Open application', skills:'Key technical skills', cv:'CV (required)', applicationMessage:'Briefly describe the type of assignment you seek and your availability.', sendApplication:'Send open application', assignment:'Which assignment is this about?', choose:'Select assignment', loading:'Loading published assignments…', empty:'There are no published assignments right now. Select general enquiry to contact us.', error:'Assignments could not be loaded. Try again later or select general enquiry.'}
   };
   const localized = value => typeof value === 'string' ? value : (value?.[lang()] || value?.sv || value?.en || '');
   function render() {
@@ -119,6 +127,15 @@
     topic.options[0].textContent = l.chooseTopic;
     topic.options[1].textContent = l.general;
     topic.options[2].textContent = l.published;
+    topic.options[3].textContent = l.spontaneous;
+    const spontaneous = topic.value === 'Spontanansökan';
+    skillsField.hidden = !spontaneous;
+    attachment.required = spontaneous;
+    document.getElementById('contact-skills-label').textContent = l.skills;
+    document.getElementById('contact-attachment-label').textContent = spontaneous ? l.cv : (lang() === 'en' ? 'Attachment / CV' : 'Bilaga / CV');
+    message.placeholder = spontaneous ? l.applicationMessage : (translations[lang()]['form.messagePlaceholder'] || '');
+    submit.textContent = spontaneous ? l.sendApplication : (translations[lang()]['form.submit'] || 'Skicka förfrågan');
+    formType.value = spontaneous ? 'Spontanansökan' : 'Kontaktförfrågan';
     const selected = assignment.value;
     assignment.replaceChildren(new Option(loading ? l.loading : l.choose, ''));
     available.forEach(item => assignment.add(new Option(localized(item.title), localized(item.title))));
@@ -129,7 +146,10 @@
     assignment.required = show && !assignment.disabled;
     help.textContent = show ? (loading ? l.loading : loadFailed ? l.error : !available.length ? l.empty : '') : '';
   }
-  topic.addEventListener('change', render);
+  topic.addEventListener('change', () => {
+    if (topic.value === 'Spontanansökan' && !role.value) role.value = 'Uppdragstagare';
+    render();
+  });
   document.querySelectorAll('[data-set-lang]').forEach(button => button.addEventListener('click', render));
   render();
   fetch('content/assignments.json', {cache:'no-store'})
