@@ -36,7 +36,7 @@
   <p data-i18n="contact.lead">Beskriv uppdraget, systemmiljön eller frågan. Formuläret är byggt för både uppdragsgivare och uppdragstagare.</p>
 </section>
 <section class="section contact-layout">
-  <form class="contact-form reveal" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
+  <form id="kontaktformular" class="contact-form reveal" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="fi-text-formulartyp" value="Kontaktförfrågan">
     <label><span data-i18n="form.role">Kontaktroll</span><select name="fi-text-kontaktroll" required><option value="" data-i18n="form.chooseRole">Välj roll</option><option value="Uppdragstagare" data-i18n="form.contractor">Uppdragstagare</option><option value="Uppdragsgivare" data-i18n="form.client">Uppdragsgivare</option></select></label>
     <label><span id="contact-topic-label">Vad gäller ditt meddelande?</span>
@@ -145,6 +145,10 @@
     assignment.disabled = !show || loading || loadFailed || !available.length;
     assignment.required = show && !assignment.disabled;
     help.textContent = show ? (loading ? l.loading : loadFailed ? l.error : !available.length ? l.empty : '') : '';
+  }
+  if (new URLSearchParams(location.search).get('arende') === 'spontanansokan') {
+    topic.value = 'Spontanansökan';
+    role.value = 'Uppdragstagare';
   }
   topic.addEventListener('change', () => {
     if (topic.value === 'Spontanansökan' && !role.value) role.value = 'Uppdragstagare';
