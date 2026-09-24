@@ -1,3 +1,18 @@
+# Ny gemensam uppdragsportal (förberedd, kräver konfiguration)
+
+Annonser och ansökningar hanteras i den nya portalen på `/admin.html`.
+Se **[PORTAL_SETUP.md](PORTAL_SETUP.md)** för Supabase-schema, Vercel-variabler,
+adminbehörighet och acceptanstest före driftsättning. Integrationen måste anslutas
+innan denna version tas i produktion.
+
+Publika sidor: `/uppdrag.html`, `/uppdrag-detalj.html?id=…`, `/ansok.html`.
+Allmänna kontaktförfrågningar använder fortsatt Getform. Nya jobbansökningar går till
+portalen. Pages CMS/JSON är det äldre arbetssättet och uppdaterar inte portalens databas.
+
+---
+
+## Tidigare implementation (historik)
+
 # ANKA Tech – GitHub, Vercel och adminportal
 
 Den här versionen är förberedd för ett enkelt adminflöde med GitHub, Vercel, Pages CMS och Getform.

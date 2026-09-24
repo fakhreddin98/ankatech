@@ -1,5 +1,8 @@
+// The portal API is the single source for published assignments.
+window.ANKA_ASSIGNMENTS = [];
 const translations={
 sv:{
+"portal.attachment":"Bilaga","portal.general":"Allmän förfrågan","portal.contactTitle":"Söker du uppdrag?","portal.contactLead":"Alla ansökningar samlas i vår uppdragsportal.","portal.jobs":"Se publicerade uppdrag","portal.apply":"Skicka spontanansökan",
 "title.home":"Start | ANKA Tech","title.services":"Tjänster | ANKA Tech","title.partners":"Tekniskt sammanhang | ANKA Tech","title.assignments":"Uppdrag | ANKA Tech","title.contact":"Kontakt | ANKA Tech",
 "nav.home":"Start","nav.services":"Tjänster","nav.partners":"Tekniskt sammanhang","nav.assignments":"Uppdrag","nav.contact":"Kontakt","nav.cta":"Starta dialog",
 "common.readMore":"Läs mer",
@@ -12,6 +15,7 @@ sv:{
 "footer.description":"Produktutveckling, teknisk problemlösning och verifiering för avancerade fordonsmiljöer.","footer.pages":"Sidor","footer.focusTitle":"Fokus","footer.company":"Bolag","footer.brand":"Varumärke: ANKA Tech","footer.contact":"Kontakta oss","footer.bottom":"Teknisk konsultverksamhet med fokus på robusta testmiljöer."
 },
 en:{
+"portal.attachment":"Attachment","portal.general":"General enquiry","portal.contactTitle":"Looking for an assignment?","portal.contactLead":"All applications are handled in our assignment portal.","portal.jobs":"View open assignments","portal.apply":"Send open application",
 "title.home":"Home | ANKA Tech","title.services":"Services | ANKA Tech","title.partners":"Technical context | ANKA Tech","title.assignments":"Assignments | ANKA Tech","title.contact":"Contact | ANKA Tech",
 "nav.home":"Home","nav.services":"Services","nav.partners":"Technical context","nav.assignments":"Assignments","nav.contact":"Contact","nav.cta":"Start a dialogue",
 "common.readMore":"Read more",
@@ -201,9 +205,9 @@ function translateLabels(){
 }
 
 function assignmentText(value, lang){
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  return value[lang] || value.sv || value.en || "";
+  if (!value) return '';
+  const text = typeof value === 'string' ? value : value[lang] || value.sv || value.en || '';
+  return String(text).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
 
 function openAssignments(){
@@ -246,7 +250,7 @@ function renderAssignmentCard(item, compact=false){
           ${start ? `<span>Start: ${start}</span>` : ""}
         </div>
         <p class="ac-description">${description}</p>
-        <div class="assignment-tags">${(item.tags || []).map(tag => `<span>${tag}</span>`).join("")}</div>
+        <div class="assignment-tags">${(item.tags || []).map(tag => `<span>${assignmentText(tag, lang)}</span>`).join("")}</div>
         <div class="assignment-actions">
           <a class="assignment-apply-link" href="${detailUrl}#ansok">${dict["jobs.apply"]}</a>
           <a class="assignment-secondary-link" href="${detailUrl}">${dict["jobs.readMore"]}</a>
@@ -368,16 +372,26 @@ applyLang(localStorage.getItem('ankaLang') || 'sv');
 
 // Load assignments from CMS-managed JSON. The old assignments-data.js is only a fallback.
 async function loadCmsAssignments(){
+  if (!document.querySelector('[data-featured-assignments], [data-assignment-list]')) return;
   try {
-    const response = await fetch('content/assignments.json', {cache: 'no-store'});
-    if (!response.ok) return;
+    const response = await fetch('/api/portal?action=jobs', {cache: 'no-store'});
+    if (!response.ok) throw new Error('Assignments unavailable');
     const data = await response.json();
-    if (Array.isArray(data)) {
-      window.ANKA_ASSIGNMENTS = data;
-      if (typeof renderAssignments === 'function') renderAssignments();
-    }
-  } catch (error) {
-    // Local file preview may block fetch. On Vercel/GitHub hosting it works normally.
+    window.ANKA_ASSIGNMENTS = data.jobs.map(job => ({
+      id: job.id, status: 'open', featured: true,
+      title: {sv: job.title, en: job.title_en || job.title},
+      description: {sv: job.summary, en: job.summary_en || job.summary},
+      location: job.location, scope: job.scope, start: job.start_text,
+      deadline: job.deadline, tags: [job.category, job.work_mode]
+    }));
+    renderAssignments();
+  } catch (_) {
+    document.querySelectorAll('[data-featured-assignments], [data-assignment-list]').forEach(el => {
+      const p = document.createElement('p');
+      p.className = 'assignment-empty';
+      p.textContent = currentLang() === 'en' ? 'Assignments could not be loaded. Please try again later.' : 'Uppdragen kunde inte hämtas. Försök igen senare.';
+      el.replaceChildren(p);
+    });
   }
 }
 loadCmsAssignments();
