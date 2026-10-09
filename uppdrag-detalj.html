@@ -281,7 +281,7 @@
 
             <div class="form-grid">
               <label><span>${lang === "en" ? "Availability" : "Tillgänglighet"}</span><input type="text" name="fi-text-tillganglighet" placeholder="${lang === "en" ? "e.g. immediately, 1 month" : "Ex. Omgående, 1 månad, deltid"}"></label>
-              <label><span>${lang === "en" ? "Geographic area" : "Geografiskt område"}</span><input type="text" name="fi-text-geografiskt-omrade" placeholder="${lang === "en" ? "e.g. Gothenburg, remote" : "Ex. Göteborg, Borås, remote"}"></label>
+              <label><span>${lang === "en" ? "Geographic area" : "Geografiskt område"}</span><input type="text" name="fi-text-ort" placeholder="${lang === "en" ? "e.g. Gothenburg, remote" : "Ex. Göteborg, Borås, remote"}"></label>
             </div>
 
             <label><span>${lang === "en" ? "Key technical skills" : "Tekniska nyckelkompetenser"}</span>
@@ -328,11 +328,11 @@
             </div>
 
             <label><span>${lang === "en" ? "Message / Motivation" : "Kort motivering / meddelande"}</span>
-              <textarea name="fi-textarea-meddelande" rows="5" required placeholder="${lang === "en" ? "Briefly describe why this assignment matches your profile." : "Beskriv kort varför uppdraget passar din profil och vad du har arbetat med tidigare."}"></textarea>
+              <textarea name="fi-text-meddelande" rows="5" required placeholder="${lang === "en" ? "Briefly describe why this assignment matches your profile." : "Beskriv kort varför uppdraget passar din profil och vad du har arbetat med tidigare."}"></textarea>
             </label>
 
             <label class="consent">
-              <input type="checkbox" name="fi-text-samtycke" required>
+              <input type="checkbox" name="fi-text-samtycke" value="Godkänt" required>
               <span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
             </label>
 
