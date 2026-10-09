@@ -44,8 +44,29 @@
       <h2 data-i18n="jobs.title">Sök uppdrag som matchar din tekniska profil.</h2>
       <p data-i18n="jobs.lead">Här publiceras utvalda uppdrag inom ADAS, verifiering, testautomation, mätdata och teknisk problemlösning.</p>
     </div>
-    <a class="button primary magnetic" href="kontakt.html?arende=spontanansokan#kontaktformular" data-i18n="jobs.spontaneousCta">Skicka spontanansökan</a>
+    <a class="button ghost magnetic" href="kontakt.html?arende=spontanansokan#kontaktformular" data-i18n="jobs.spontaneousCta">Skicka spontanansökan</a>
   </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="assignment-filter-toolbar">
+    <div class="filter-search-box">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="assignment-search-input" placeholder="Sök på roll, teknik eller ort (t.ex. ADAS, Göteborg)..." aria-label="Sök uppdrag">
+      <button type="button" id="assignment-search-clear" class="search-clear-btn" style="display:none;" aria-label="Rensa sökning">✕</button>
+    </div>
+    <div class="filter-pills-wrap" id="assignment-filter-pills">
+      <button type="button" class="filter-pill active" data-filter="all">Alla uppdrag</button>
+      <button type="button" class="filter-pill" data-filter="ADAS">ADAS</button>
+      <button type="button" class="filter-pill" data-filter="Verifiering">Verifiering</button>
+      <button type="button" class="filter-pill" data-filter="Testbana">Testbana</button>
+      <button type="button" class="filter-pill" data-filter="Göteborg">Göteborg</button>
+    </div>
+  </div>
+
+  <div class="assignment-count-bar">
+    <span id="assignment-count-text">Visar aktuella uppdrag</span>
+  </div>
+
   <div class="assignment-list assignment-list--full" data-assignment-list></div>
 </section>
 
@@ -53,49 +74,152 @@
   <div class="application-copy">
     <p class="eyebrow" data-i18n="apply.eyebrow">Ansök till uppdrag</p>
     <h2 data-i18n="apply.title">Skicka din profil för valt uppdrag.</h2>
-    <p data-i18n="apply.lead">Fyll i formuläret och bifoga CV. Ange gärna tillgänglighet, geografiskt område och relevanta tekniska nyckelkompetenser.</p>
+    <p data-i18n="apply.lead">Fyll i formuläret och bifoga ditt CV. Ange gärna tillgänglighet, geografiskt område och relevanta tekniska nyckelkompetenser.</p>
+
+    <div class="selected-assignment-callout" id="selected-assignment-callout" style="display:none;">
+      <span class="callout-label">Valt uppdrag:</span>
+      <strong id="callout-assignment-title">Välj uppdrag i formuläret</strong>
+    </div>
+
+    <div class="application-trust-box">
+      <div class="trust-item">
+        <span class="trust-icon">⚡</span>
+        <div>
+          <strong>Snabb återkoppling</strong>
+          <p>Vi matchar och svarar normalt inom 1–2 arbetsdagar.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">🔒</span>
+        <div>
+          <strong>Konfidentiell hantering</strong>
+          <p>Dina uppgifter och CV hanteras säkert och delas enbart i dialog med dig.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <form class="contact-form assignment-form" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="fi-text-formulartyp" value="Ansökan till uppdrag">
+  <div class="form-wrapper">
+    <form class="contact-form assignment-form" id="application-form" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="fi-text-formulartyp" value="Ansökan till uppdrag">
 
-    <label data-i18n-label="form.assignment">Uppdrag
-      <select name="fi-text-uppdrag" data-assignment-select required>
-        <option value="" data-i18n="form.chooseAssignment">Välj uppdrag</option>
-      </select>
-    </label>
+      <div class="form-section-header">
+        <span class="form-section-number">01</span>
+        <div>
+          <h3>Välj uppdrag</h3>
+          <p>Ange vilket uppdrag du är intresserad av.</p>
+        </div>
+      </div>
 
-    <div class="form-grid">
-      <label data-i18n-label="form.name">Namn<input type="text" name="fi-sender-fullName" autocomplete="name" required></label>
-      <label data-i18n-label="form.phone">Telefonnummer<input type="tel" name="fi-sender-phone" autocomplete="tel"></label>
-      <label data-i18n-label="form.email">E-post<input type="email" name="fi-sender-email" autocomplete="email" required></label>
-      <label data-i18n-label="form.company">Bolag / organisation<input type="text" name="fi-text-bolag"></label>
+      <label data-i18n-label="form.assignment">Uppdrag
+        <select name="fi-text-uppdrag" data-assignment-select required>
+          <option value="" data-i18n="form.chooseAssignment">Välj uppdrag</option>
+        </select>
+      </label>
+
+      <div class="form-section-header" style="margin-top:24px;">
+        <span class="form-section-number">02</span>
+        <div>
+          <h3>Person- & kontaktuppgifter</h3>
+          <p>Hur når vi dig bäst?</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label data-i18n-label="form.name">Namn<input type="text" name="fi-sender-fullName" autocomplete="name" required placeholder="För- och efternamn"></label>
+        <label data-i18n-label="form.phone">Telefonnummer<input type="tel" name="fi-sender-phone" autocomplete="tel" placeholder="+46 70 123 45 67"></label>
+        <label data-i18n-label="form.email">E-post<input type="email" name="fi-sender-email" autocomplete="email" required placeholder="namn@epost.se"></label>
+        <label>LinkedIn / Portfolio<input type="url" name="fi-text-linkedin" placeholder="https://linkedin.com/in/..."></label>
+      </div>
+
+      <div class="form-section-header" style="margin-top:24px;">
+        <span class="form-section-number">03</span>
+        <div>
+          <h3>Profil & tillgänglighet</h3>
+          <p>Hjälp oss förstå din nuvarande situation.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label data-i18n-label="form.availability">Tillgänglighet<input type="text" name="fi-text-tillganglighet" placeholder="Ex. Omgående, 1 månad, deltid" data-i18n-placeholder="form.availabilityPlaceholder"></label>
+        <label data-i18n-label="form.location">Geografiskt område<input type="text" name="fi-text-geografiskt-omrade" placeholder="Ex. Göteborg, Borås, remote" data-i18n-placeholder="form.locationPlaceholder"></label>
+      </div>
+
+      <label data-i18n-label="form.skills">Tekniska nyckelkompetenser
+        <input type="text" name="fi-text-kompetenser" placeholder="Ex. ADAS, Python, CANalyzer, Vector, GNSS/INS, HIL" data-i18n-placeholder="form.skillsPlaceholder">
+      </label>
+
+      <div class="form-section-header" style="margin-top:24px;">
+        <span class="form-section-number">04</span>
+        <div>
+          <h3>Bifoga CV & motivering</h3>
+          <p>Ladda upp ditt CV samt en kort motivering.</p>
+        </div>
+      </div>
+
+      <!-- Modern Drag & Drop CV Upload -->
+      <div class="dropzone-field">
+        <span class="dropzone-label">CV / Meritförteckning <span class="required-star">*</span></span>
+        <div class="file-dropzone" id="cv-dropzone">
+          <input type="file" name="fi-file-bilaga" id="cv-file-input" accept=".pdf,.doc,.docx" required class="file-input-hidden">
+          <div class="dropzone-content dropzone-idle">
+            <div class="dropzone-icon">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="dropzone-text">
+              <strong>Klicka för att välja fil</strong> eller dra & släpp ditt CV här
+            </div>
+            <div class="dropzone-hint">Format: PDF eller Word (max 10 MB)</div>
+          </div>
+          <div class="dropzone-content dropzone-selected" style="display:none;">
+            <div class="dropzone-file-info">
+              <span class="file-badge-icon">📄</span>
+              <div class="file-details">
+                <strong class="dropzone-filename">filnamn.pdf</strong>
+                <span class="dropzone-filesize">1.2 MB</span>
+              </div>
+            </div>
+            <button type="button" class="dropzone-remove-file" title="Byt eller ta bort fil">Byt fil</button>
+          </div>
+        </div>
+      </div>
+
+      <label data-i18n-label="form.message">Kort motivering / meddelande
+        <textarea name="fi-textarea-meddelande" rows="5" required placeholder="Beskriv kort vad du har gjort tidigare och varför uppdraget passar din profil." data-i18n-placeholder="form.assignmentMessagePlaceholder"></textarea>
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" name="fi-text-samtycke" required>
+        <span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
+      </label>
+
+      <div class="form-feedback-msg" style="display:none;" role="alert"></div>
+
+      <button class="button primary magnetic btn-submit-app" type="submit" data-i18n="apply.submit">
+        <span>Skicka ansökan</span>
+      </button>
+    </form>
+
+    <div class="form-success-card" id="application-success-view" style="display:none;">
+      <div class="success-icon-wrap">
+        <svg class="checkmark-svg" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="24" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+      <h3>Tack för din ansökan!</h3>
+      <p class="success-subtitle">Vi har tagit emot ditt underlag för <strong id="success-assignment-name">uppdraget</strong>.</p>
+      <p class="success-desc">Vårt team granskar din profil och ditt CV och återkommer så snart som möjligt.</p>
+      <div class="success-actions">
+        <button type="button" class="button ghost" id="btn-submit-another">Skicka ytterligare ansökan</button>
+        <a href="uppdrag.html" class="button primary">Se alla uppdrag</a>
+      </div>
     </div>
-
-    <div class="form-grid">
-      <label data-i18n-label="form.availability">Tillgänglighet<input type="text" name="fi-text-tillganglighet" placeholder="Ex. omgående, 1 månad, deltid" data-i18n-placeholder="form.availabilityPlaceholder"></label>
-      <label data-i18n-label="form.location">Geografiskt område<input type="text" name="fi-text-geografiskt-omrade" placeholder="Ex. Göteborg, Borås, remote" data-i18n-placeholder="form.locationPlaceholder"></label>
-    </div>
-
-    <label data-i18n-label="form.skills">Tekniska nyckelkompetenser
-      <input type="text" name="fi-text-kompetenser" placeholder="Ex. ADAS, Python, CAN, GNSS/INS, HIL" data-i18n-placeholder="form.skillsPlaceholder">
-    </label>
-
-    <label data-i18n-label="form.attachment">Bilaga / CV
-      <input type="file" name="fi-file-bilaga" accept=".pdf,.doc,.docx" required>
-    </label>
-
-    <label data-i18n-label="form.message">Meddelande
-      <textarea name="fi-textarea-meddelande" rows="6" required placeholder="Beskriv kort varför uppdraget passar din profil." data-i18n-placeholder="form.assignmentMessagePlaceholder"></textarea>
-    </label>
-
-    <label class="consent">
-      <input type="checkbox" name="fi-text-samtycke" required>
-      <span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
-    </label>
-
-    <button class="button primary magnetic" type="submit" data-i18n="apply.submit">Skicka ansökan</button>
-  </form>
+  </div>
 </section>
 
 <section class="section dark-panel reveal">

@@ -1,5 +1,5 @@
 # Pages CMS – ANKA Tech
-# Konfigurera detta i repo-roten. Logga in på app.pagescms.org med GitHub.
+# Logga in på app.pagescms.org med GitHub för att redigera.
 
 media:
   input: assets
@@ -14,177 +14,111 @@ content:
     list: true
     fields:
 
-      # ── Identitet & status ──────────────────────────────────────
+      # ── Grunduppgifter ──────────────────────────────────────────
       - name: id
-        label: "Unikt ID"
+        label: "Unikt ID (Slug)"
         type: string
         required: true
-        description: "Slug utan åäö eller mellanslag. Ex: adas-engineer-2026"
+        description: "Unikt ID i URL:en, små bokstäver utan mellanslag eller åäö. Ex: adas-ingenjor-astazero"
 
       - name: status
         label: "Status"
         type: select
         required: true
+        default: open
         options:
           values:
-            - value: open
-              label: "Öppen"
-            - value: closed
-              label: "Stängd"
+            - { value: open,   label: "Öppen (visas på sidan)" }
+            - { value: closed, label: "Stängd (dold)" }
 
       - name: featured
         label: "Visa på startsidan"
         type: boolean
-        default: false
+        default: true
+        description: "Om markerad visas uppdraget även bland utvalda uppdrag på startsidan."
 
-      # ── Titel & rollbeskrivning ─────────────────────────────────
       - name: title
         label: "Annonstitel"
-        type: object
-        fields:
-          - { name: sv, label: "Titel (SV)", type: string, required: true }
-          - { name: en, label: "Title (EN)", type: string }
+        type: string
+        required: true
+        description: "Ex: Testingenjör inom Fordon & Aktiva Säkerhetssystem"
+
+      - name: client
+        label: "Kund / Arbetsplats"
+        type: string
+        description: "Ex: AstaZero AB eller Ledande fordonstillverkare"
 
       - name: role
         label: "Roll / Befattning"
-        type: object
-        fields:
-          - { name: sv, label: "Roll (SV)", type: string }
-          - { name: en, label: "Role (EN)", type: string }
+        type: string
+        description: "Ex: Testingenjör / ADAS"
 
       - name: seniority
         label: "Erfarenhetsnivå"
         type: select
+        default: Mid
         options:
           values:
-            - { value: Junior, label: Junior }
-            - { value: Mid, label: Mid }
-            - { value: Senior, label: Senior }
-            - { value: Lead, label: Lead }
+            - { value: Junior, label: "Junior" }
+            - { value: Mid,    label: "Mid" }
+            - { value: Senior, label: "Senior" }
+            - { value: Lead,   label: "Lead / Specialist" }
 
-      # ── Plats & form ────────────────────────────────────────────
+      # ── Plats & Tidsplan ────────────────────────────────────────
       - name: location
         label: "Plats"
-        type: object
-        fields:
-          - { name: sv, label: "Plats (SV)", type: string }
-          - { name: en, label: "Location (EN)", type: string }
+        type: string
+        description: "Ex: Göteborg & Borås (SE)"
 
       - name: remote
-        label: "Remote-andel"
+        label: "Remote / På plats"
         type: select
+        default: "0%"
         options:
           values:
-            - { value: "0%",   label: "0% – Ej remote" }
-            - { value: "25%",  label: "25%" }
-            - { value: "50%",  label: "50%" }
-            - { value: "75%",  label: "75%" }
+            - { value: "0%",   label: "0% – På plats / bana" }
+            - { value: "25%",  label: "Hybrid (ca 25% remote)" }
+            - { value: "50%",  label: "Hybrid (ca 50% remote)" }
             - { value: "100%", label: "100% – Helt remote" }
 
-      - name: scope
-        label: "Uppdragsform"
-        type: object
-        fields:
-          - { name: sv, label: "Uppdragsform (SV)", type: string }
-          - { name: en, label: "Assignment type (EN)", type: string }
-
-      # ── Tidsplan ────────────────────────────────────────────────
-      - name: period_start
+      - name: start
         label: "Startdatum"
-        type: date
-        description: "ISO-format: ÅÅÅÅ-MM-DD"
-
-      - name: period_end
-        label: "Slutdatum (estimerat)"
-        type: date
+        type: string
+        description: "Ex: November 2026 / Omgående"
 
       - name: deadline
-        label: "Ansökningsdeadline"
+        label: "Sista ansökningsdag"
         type: date
-
-      - name: start
-        label: "Starttext (fritext)"
-        type: object
-        description: "Visas i kortets meta-rad. Ex: '15 jun 2026'"
-        fields:
-          - { name: sv, label: "Start (SV)", type: string }
-          - { name: en, label: "Start (EN)", type: string }
-
-      # ── Kommersiellt ────────────────────────────────────────────
-      - name: rate
-        label: "Arvode"
-        type: object
-        fields:
-          - { name: sv, label: "Arvode (SV)", type: string, description: "Ex: upp till 580 SEK/h" }
-          - { name: en, label: "Rate (EN)",   type: string, description: "Ex: up to 580 SEK/h" }
-
-      - name: client
-        label: "Kund / Förmedlare"
-        type: string
-        description: "Ex: Ework Group AB"
+        description: "Datum då annonsen stänger (ÅÅÅÅ-MM-DD)"
 
       - name: hours_per_week
-        label: "Timmar per vecka"
+        label: "Omfattning (timmar/vecka)"
         type: number
+        default: 40
 
-      # ── Ingress (kort) ──────────────────────────────────────────
-      - name: description
+      - name: rate
+        label: "Arvode / Ersättning"
+        type: string
+        description: "Valfritt. Ex: Enligt överenskommelse eller upp till 580 SEK/h"
+
+      # ── Korta sammanfattningen & Taggar ────────────────────────
+      - name: summary
         label: "Kort sammanfattning (visas på kortet)"
-        type: object
-        fields:
-          - { name: sv, label: "Sammanfattning (SV)", type: text, required: true }
-          - { name: en, label: "Summary (EN)",         type: text }
+        type: text
+        description: "1-2 korta meningar som sammanfattar uppdraget och visas på listkorten."
 
-      # ── Strukturerade sektioner ─────────────────────────────────
-      - name: sections
-        label: "Innehållssektioner"
-        type: object
-        list: true
-        fields:
-          - name: heading
-            label: "Rubrik"
-            type: object
-            fields:
-              - { name: sv, label: "Rubrik (SV)", type: string }
-              - { name: en, label: "Heading (EN)", type: string }
-          - name: body
-            label: "Brödtext"
-            type: object
-            fields:
-              - { name: sv, label: "Text (SV)", type: text }
-              - { name: en, label: "Body (EN)", type: text }
-
-      # ── Kompetenser ─────────────────────────────────────────────
-      - name: required_skills
-        label: "Obligatoriska kompetenser"
-        type: string
-        list: true
-        description: "En kompetens per rad. Ex: GNSS/INS"
-
-      - name: preferred_skills
-        label: "Meriterande kompetenser"
-        type: string
-        list: true
-
-      # ── Språk ───────────────────────────────────────────────────
-      - name: languages
-        label: "Språkkrav"
-        type: object
-        list: true
-        fields:
-          - { name: name, label: "Språk",   type: string }
-          - name: level
-            label: "Nivå"
-            type: object
-            fields:
-              - { name: sv, label: "Nivå (SV)", type: string }
-              - { name: en, label: "Level (EN)", type: string }
-
-      # ── Taggar ──────────────────────────────────────────────────
       - name: tags
-        label: "Taggar (för filtrering)"
+        label: "Nyckelkompetenser / Taggar"
         type: string
         list: true
+        description: "Taggar för filtrering och kort. Ex: ADAS, CANalyzer, Vector, Python"
+
+      # ── Annonstext / Huvudinnehåll ─────────────────────────────
+      - name: description
+        label: "Fullständig uppdragsbeskrivning (stödjer Markdown)"
+        type: text
+        required: true
+        description: "Skriv eller klistra in hela annonsen. Du kan använda vanliga rubriker (## Rubrik), punktlistor (- punkt) och fetstil (**text**)."
 
   # ── Grundinställningar ─────────────────────────────────────────
   - name: site

@@ -121,6 +121,11 @@ const assignmentTranslations = {
     "jobs.location":"Plats",
     "jobs.scope":"Omfattning",
     "jobs.start":"Start",
+    "jobs.quickApply":"Snabbansök",
+    "jobs.viewDetails":"Läs mer & detaljer",
+    "jobs.showingCount":"Visar aktuella uppdrag",
+    "jobs.noMatches":"Inga uppdrag matchar din sökning eller valt filter.",
+    "jobs.filterAll":"Alla uppdrag",
     "apply.eyebrow":"Ansök till uppdrag",
     "apply.title":"Skicka din profil för valt uppdrag.",
     "apply.lead":"Fyll i formuläret och bifoga CV. Ange gärna tillgänglighet, geografiskt område och relevanta tekniska nyckelkompetenser.",
@@ -151,6 +156,11 @@ const assignmentTranslations = {
     "jobs.spontaneousCta":"Send open application",
     "jobs.apply":"Apply for assignment",
     "jobs.readMore":"View details",
+    "jobs.quickApply":"Quick apply",
+    "jobs.viewDetails":"View details",
+    "jobs.showingCount":"Showing open assignments",
+    "jobs.noMatches":"No assignments match your search or selected filter.",
+    "jobs.filterAll":"All assignments",
     "jobs.noOpen":"There are no published assignments right now. You are welcome to send an open application so we can match your profile with upcoming needs.",
     "jobs.location":"Location",
     "jobs.scope":"Scope",
@@ -203,8 +213,59 @@ function translateLabels(){
 function assignmentText(value, lang){
   if (!value) return "";
   if (typeof value === "string") return value;
-  return value[lang] || value.sv || value.en || "";
+  if (typeof value === "object") {
+    return value[lang] || value.sv || value.en || "";
+  }
+  return String(value);
 }
+
+function renderMarkdown(md) {
+  if (!md) return "";
+  let html = String(md)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Headers
+  html = html.replace(/^### (.*$)/gim, '<h4 class="ad-h4">$1</h4>');
+  html = html.replace(/^## (.*$)/gim, '<h3 class="ad-h3">$1</h3>');
+  html = html.replace(/^# (.*$)/gim, '<h2 class="ad-h2">$1</h2>');
+
+  // Bold
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // Lists
+  const lines = html.split('\n');
+  let inList = false;
+  let result = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith('- ') || line.startsWith('* ')) {
+      if (!inList) {
+        inList = true;
+        result.push('<ul class="ad-list">');
+      }
+      result.push(`<li>${line.substring(2)}</li>`);
+    } else {
+      if (inList) {
+        inList = false;
+        result.push('</ul>');
+      }
+      if (line.length > 0) {
+        if (line.startsWith('<h2') || line.startsWith('<h3') || line.startsWith('<h4')) {
+          result.push(line);
+        } else {
+          result.push(`<p>${line}</p>`);
+        }
+      }
+    }
+  }
+  if (inList) result.push('</ul>');
+
+  return result.join('\n');
+}
+window.renderMarkdown = renderMarkdown;
 
 function openAssignments(){
   return (window.ANKA_ASSIGNMENTS || []).filter(item => item.status !== "closed");
@@ -212,118 +273,170 @@ function openAssignments(){
 
 function renderAssignmentCard(item, compact=false){
   const lang = currentLang();
+  const dict = translations[lang] || translations.sv;
   const title       = assignmentText(item.title, lang);
   const location    = assignmentText(item.location, lang);
-  const scope       = assignmentText(item.scope, lang);
   const start       = assignmentText(item.start, lang);
-  const description = assignmentText(item.description, lang);
-  const dict = translations[lang] || translations.sv;
+  const role        = assignmentText(item.role, lang);
+  const client      = assignmentText(item.client, lang);
+  const rate        = assignmentText(item.rate, lang);
+  const summary     = assignmentText(item.summary, lang) ||
+                      (item.description ? assignmentText(item.description, lang).replace(/^[#\-*\s]+/gm, '').substring(0, 160) + '...' : '');
 
-  const detailUrl = `uppdrag-detalj.html?id=${item.id}`;
+  const detailUrl = `uppdrag-detalj.html?id=${encodeURIComponent(item.id)}`;
 
   // Deadline badge
   let deadlineBadge = "";
   if (item.deadline) {
     const days = Math.ceil((new Date(item.deadline + "T23:59:59") - new Date()) / 86400000);
     if (days >= 0 && days <= 14) {
-      deadlineBadge = `<span class="ac-deadline-badge">${days} ${lang === "en" ? "days left" : "dagar kvar"}</span>`;
+      deadlineBadge = `<span class="ac-deadline-badge">⏳ ${days} ${lang === "en" ? "days left" : "dagar kvar"}</span>`;
     }
   }
 
+  // Tags
+  const tags = Array.isArray(item.tags) ? item.tags : [];
+
   if (compact) {
     return `
-      <article class="assignment-mini-card">
-        <div class="ac-badges">
-          <span class="ac-badge ac-badge-open">${lang === "en" ? "Open" : "Öppet"}</span>
-          ${item.seniority ? `<span class="ac-badge ac-badge-seniority">${item.seniority}</span>` : ""}
-          ${deadlineBadge}
+      <article class="assignment-mini-card ac-modern-card" data-card-id="${item.id}">
+        <div class="ac-card-top">
+          <div class="ac-badges-wrap">
+            <span class="ac-status-badge">
+              <span class="ac-pulse-dot"></span>
+              ${lang === "en" ? "Open" : "Öppet"}
+            </span>
+            ${item.seniority ? `<span class="ac-seniority-badge">${item.seniority}</span>` : ""}
+            ${client ? `<span class="ac-client-badge">🏢 ${client}</span>` : ""}
+            ${deadlineBadge}
+          </div>
+          <h3 class="ac-card-title"><a href="${detailUrl}">${title}</a></h3>
+          ${role ? `<p class="ac-card-role">${role}</p>` : ""}
         </div>
-        <h3>${title}</h3>
-        ${item.role ? `<p class="ac-role">${assignmentText(item.role, lang)}</p>` : ""}
-        <div class="ac-meta-strip">
-          ${location ? `<span>📍 ${location}</span>` : ""}
-          ${item.remote !== undefined ? `<span>${item.remote} remote</span>` : ""}
-          ${start ? `<span>Start: ${start}</span>` : ""}
+        <div class="ac-chips-row">
+          ${location ? `<span class="ac-chip">📍 ${location}</span>` : ""}
+          ${item.remote !== undefined ? `<span class="ac-chip">💻 ${item.remote} remote</span>` : ""}
+          ${start ? `<span class="ac-chip">⚡ Start: ${start}</span>` : ""}
         </div>
-        <p class="ac-description">${description}</p>
-        <div class="assignment-tags">${(item.tags || []).map(tag => `<span>${tag}</span>`).join("")}</div>
-        <div class="assignment-actions">
-          <a class="assignment-apply-link" href="${detailUrl}#ansok">${dict["jobs.apply"]}</a>
-          <a class="assignment-secondary-link" href="${detailUrl}">${dict["jobs.readMore"]}</a>
+        <p class="ac-summary-text">${summary}</p>
+        ${tags.length ? `<div class="ac-tags-row">${tags.slice(0, 4).map(tag => `<span class="ac-tag-pill">${tag}</span>`).join("")}</div>` : ""}
+        <div class="ac-card-footer">
+          <a class="button primary ac-btn-primary" href="${detailUrl}">
+            <span>${dict["jobs.viewDetails"] || "Läs mer & detaljer"}</span>
+            <span class="ac-btn-arrow">→</span>
+          </a>
+          <button type="button" class="ac-btn-quickapply" data-apply-id="${item.id}" data-apply-title="${title}">
+            ${dict["jobs.quickApply"] || "Snabbansök"}
+          </button>
         </div>
       </article>`;
   }
 
-  // Full card (list view)
-  const sectionsHTML = (item.sections || []).length
-    ? `<div class="ac-sections">${item.sections.slice(0, 1).map(s =>
-        `<div class="ac-section-block">
-          <h4 class="ac-section-heading">${assignmentText(s.heading, lang)}</h4>
-          <div class="ac-section-body">${assignmentText(s.body, lang).replace(/\n\n/g,"</p><p>").replace(/\n/g,"<br>").replace(/^/,"<p>").replace(/$/,"</p>")}</div>
-        </div>`).join("")}</div>`
-    : `<p class="ac-description">${description}</p>`;
-
-  const requiredHTML = (item.required_skills || []).length
-    ? `<div class="ac-skills-block">
-        <span class="ac-skills-label">${lang === "en" ? "Required skills" : "Obligatoriska kompetenser"}</span>
-        <div class="assignment-tags">${item.required_skills.map(s => `<span class="ac-skill-req">${s}</span>`).join("")}</div>
-      </div>` : "";
-
-  const preferredHTML = (item.preferred_skills || []).length
-    ? `<div class="ac-skills-block">
-        <span class="ac-skills-label">${lang === "en" ? "Preferred" : "Meriterande"}</span>
-        <div class="assignment-tags">${item.preferred_skills.map(s => `<span>${s}</span>`).join("")}</div>
-      </div>` : "";
-
-  const metaGrid = `
-    <div class="ac-meta-grid">
-      ${item.role ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Role" : "Roll"}</span><span class="ac-meta-val">${assignmentText(item.role, lang)}</span></div>` : ""}
-      ${item.seniority ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Seniority" : "Nivå"}</span><span class="ac-meta-val">${item.seniority}</span></div>` : ""}
-      ${location ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Location" : "Plats"}</span><span class="ac-meta-val">${location}</span></div>` : ""}
-      ${item.remote !== undefined ? `<div class="ac-meta-cell"><span class="ac-meta-key">Remote</span><span class="ac-meta-val">${item.remote}</span></div>` : ""}
-      ${scope ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Type" : "Uppdragsform"}</span><span class="ac-meta-val">${scope}</span></div>` : ""}
-      ${start ? `<div class="ac-meta-cell"><span class="ac-meta-key">Start</span><span class="ac-meta-val">${start}</span></div>` : ""}
-      ${item.rate ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Rate" : "Arvode"}</span><span class="ac-meta-val">${assignmentText(item.rate, lang)}</span></div>` : ""}
-      ${item.client ? `<div class="ac-meta-cell"><span class="ac-meta-key">${lang === "en" ? "Client" : "Kund"}</span><span class="ac-meta-val">${item.client}</span></div>` : ""}
-    </div>`;
-
+  // Full card for uppdrag.html list
   return `
-    <article class="assignment-card ac-full-card">
-      <div class="ac-card-header">
-        <div class="ac-badges">
-          <span class="ac-badge ac-badge-open">${lang === "en" ? "Open" : "Öppet"}</span>
-          ${item.seniority ? `<span class="ac-badge ac-badge-seniority">${item.seniority}</span>` : ""}
+    <article class="assignment-card ac-modern-card" data-card-id="${item.id}">
+      <div class="ac-card-top">
+        <div class="ac-badges-wrap">
+          <span class="ac-status-badge">
+            <span class="ac-pulse-dot"></span>
+            ${lang === "en" ? "Open assignment" : "Öppet uppdrag"}
+          </span>
+          ${item.seniority ? `<span class="ac-seniority-badge">${item.seniority}</span>` : ""}
+          ${client ? `<span class="ac-client-badge">🏢 ${client}</span>` : ""}
           ${deadlineBadge}
         </div>
-        <h3>${title}</h3>
-        ${item.role ? `<p class="ac-role">${assignmentText(item.role, lang)}</p>` : ""}
+        <h3 class="ac-card-title"><a href="${detailUrl}">${title}</a></h3>
+        ${role ? `<p class="ac-card-role">${role}</p>` : ""}
       </div>
-      ${metaGrid}
-      ${sectionsHTML}
-      ${requiredHTML}
-      ${preferredHTML}
-      <div class="assignment-actions">
-        <a class="assignment-apply-link" href="${detailUrl}#ansok">${dict["jobs.apply"]}</a>
-        <a class="assignment-secondary-link" href="${detailUrl}">${lang === "en" ? "Full details →" : "Fullständig annons →"}</a>
+
+      <div class="ac-chips-row">
+        ${location ? `<span class="ac-chip">📍 ${location}</span>` : ""}
+        ${item.remote !== undefined ? `<span class="ac-chip">💻 ${item.remote} remote</span>` : ""}
+        ${start ? `<span class="ac-chip">⚡ Start: ${start}</span>` : ""}
+        ${item.hours_per_week ? `<span class="ac-chip">⏱ ${item.hours_per_week}h/vecka</span>` : ""}
+        ${rate ? `<span class="ac-chip">💰 ${rate}</span>` : ""}
+      </div>
+
+      <p class="ac-summary-text">${summary}</p>
+
+      ${tags.length ? `
+        <div class="ac-tags-row">
+          ${tags.map(tag => `<span class="ac-tag-pill">${tag}</span>`).join("")}
+        </div>` : ""}
+
+      <div class="ac-card-footer">
+        <a class="button primary ac-btn-primary" href="${detailUrl}">
+          <span>${dict["jobs.viewDetails"] || "Läs mer & detaljer"}</span>
+          <span class="ac-btn-arrow">→</span>
+        </a>
+        <button type="button" class="ac-btn-quickapply" data-apply-id="${item.id}" data-apply-title="${title}">
+          ${dict["jobs.quickApply"] || "Snabbansök"}
+        </button>
       </div>
     </article>`;
+}
+
+let activeFilterTag = "all";
+let currentSearchQuery = "";
+
+function filterAssignmentsList(assignments) {
+  return assignments.filter(item => {
+    const lang = currentLang();
+    const title = assignmentText(item.title, lang).toLowerCase();
+    const role = assignmentText(item.role, lang).toLowerCase();
+    const loc = assignmentText(item.location, lang).toLowerCase();
+    const client = assignmentText(item.client, lang).toLowerCase();
+    const desc = assignmentText(item.description, lang).toLowerCase();
+    const tags = (item.tags || []).map(t => String(t).toLowerCase());
+
+    // Tag filter
+    if (activeFilterTag !== "all") {
+      const matchTag = tags.some(t => t.includes(activeFilterTag.toLowerCase())) ||
+                       title.includes(activeFilterTag.toLowerCase()) ||
+                       role.includes(activeFilterTag.toLowerCase()) ||
+                       loc.includes(activeFilterTag.toLowerCase());
+      if (!matchTag) return false;
+    }
+
+    // Search query
+    if (currentSearchQuery.trim()) {
+      const q = currentSearchQuery.trim().toLowerCase();
+      const matchQuery = title.includes(q) ||
+                         role.includes(q) ||
+                         loc.includes(q) ||
+                         client.includes(q) ||
+                         desc.includes(q) ||
+                         tags.some(t => t.includes(q));
+      if (!matchQuery) return false;
+    }
+
+    return true;
+  });
 }
 
 function renderAssignments(){
   const lang = currentLang();
   const dict = translations[lang] || translations.sv;
-  const assignments = openAssignments();
+  const allAssignments = openAssignments();
+  const filtered = filterAssignmentsList(allAssignments);
 
   const list = document.querySelector('[data-assignment-list]');
   if (list) {
-    list.innerHTML = assignments.length
-      ? assignments.map(item => renderAssignmentCard(item, false)).join("")
-      : `<div class="assignment-empty">${dict["jobs.noOpen"]}</div>`;
+    list.innerHTML = filtered.length
+      ? filtered.map(item => renderAssignmentCard(item, false)).join("")
+      : `<div class="assignment-empty" style="padding:48px 24px;text-align:center;color:var(--muted);">${dict["jobs.noMatches"] || "Inga uppdrag matchar din sökning eller valt filter."}</div>`;
+
+    const countText = document.getElementById('assignment-count-text');
+    if (countText) {
+      countText.textContent = lang === 'en'
+        ? `Showing ${filtered.length} of ${allAssignments.length} open assignment${filtered.length === 1 ? '' : 's'}`
+        : `Visar ${filtered.length} av ${allAssignments.length} aktuella uppdrag`;
+    }
   }
 
   const featured = document.querySelector('[data-featured-assignments]');
   if (featured) {
-    const items = assignments.filter(item => item.featured).slice(0, 2);
+    const items = allAssignments.filter(item => item.featured).slice(0, 2);
     featured.innerHTML = items.length
       ? items.map(item => renderAssignmentCard(item, true)).join("")
       : `<div class="assignment-empty">${dict["jobs.noOpen"]}</div>`;
@@ -333,23 +446,255 @@ function renderAssignments(){
   if (select) {
     const selected = select.value;
     select.innerHTML = `<option value="">${dict["form.chooseAssignment"]}</option>` +
-      assignments.map(item => {
+      allAssignments.map(item => {
         const title = assignmentText(item.title, lang);
-        return `<option value="${title}">${title}</option>`;
+        return `<option value="${title}" data-id="${item.id}">${title}</option>`;
       }).join("");
     if (selected) select.value = selected;
   }
 
-  document.querySelectorAll('[data-assignment-id]').forEach(link => {
-    link.addEventListener('click', () => {
-      const item = assignments.find(a => a.id === link.dataset.assignmentId);
-      const select = document.querySelector('[data-assignment-select]');
-      if (item && select) {
-        const title = assignmentText(item.title, currentLang());
-        setTimeout(() => { select.value = title; }, 100);
+  wireQuickApplyButtons();
+}
+
+function selectAssignmentInForm(title, id) {
+  const select = document.querySelector('[data-assignment-select]');
+  if (select) {
+    if (title) select.value = title;
+    else if (id) {
+      const opt = select.querySelector(`[data-id="${id}"]`);
+      if (opt) select.value = opt.value;
+    }
+  }
+
+  const callout = document.getElementById('selected-assignment-callout');
+  const calloutTitle = document.getElementById('callout-assignment-title');
+  if (callout && calloutTitle) {
+    calloutTitle.textContent = title || select?.value || '';
+    callout.style.display = 'flex';
+  }
+
+  const ansokSection = document.getElementById('ansok');
+  if (ansokSection) {
+    ansokSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+      const nameInput = document.querySelector('[name="fi-sender-fullName"]');
+      if (nameInput) nameInput.focus();
+    }, 450);
+  }
+}
+
+function wireQuickApplyButtons() {
+  document.querySelectorAll('.ac-btn-quickapply, [data-apply-id]').forEach(btn => {
+    btn.onclick = () => {
+      const title = btn.getAttribute('data-apply-title') || '';
+      const id = btn.getAttribute('data-apply-id') || '';
+      selectAssignmentInForm(title, id);
+    };
+  });
+}
+
+function setupCvDropzone(dropzone, input) {
+  if (!dropzone || !input || dropzone.dataset.dropzoneReady) return;
+  dropzone.dataset.dropzoneReady = "true";
+
+  const idleView = dropzone.querySelector('.dropzone-idle');
+  const selectedView = dropzone.querySelector('.dropzone-selected');
+  const filenameEl = dropzone.querySelector('.dropzone-filename');
+  const filesizeEl = dropzone.querySelector('.dropzone-filesize');
+  const removeBtn = dropzone.querySelector('.dropzone-remove-file');
+
+  function updateFileDisplay(file) {
+    if (file) {
+      if (filenameEl) filenameEl.textContent = file.name;
+      if (filesizeEl) {
+        const sizeMb = file.size / (1024 * 1024);
+        filesizeEl.textContent = sizeMb >= 1 ? `${sizeMb.toFixed(1)} MB` : `${Math.round(file.size / 1024)} KB`;
       }
+      if (idleView) idleView.style.display = 'none';
+      if (selectedView) selectedView.style.display = 'flex';
+    } else {
+      input.value = '';
+      if (idleView) idleView.style.display = 'flex';
+      if (selectedView) selectedView.style.display = 'none';
+    }
+  }
+
+  input.addEventListener('change', () => {
+    if (input.files && input.files[0]) {
+      updateFileDisplay(input.files[0]);
+    } else {
+      updateFileDisplay(null);
+    }
+  });
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropzone.addEventListener(eventName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add('dragover');
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove('dragover');
+    }, false);
+  });
+
+  dropzone.addEventListener('drop', e => {
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length) {
+      input.files = dt.files;
+      updateFileDisplay(dt.files[0]);
+    }
+  });
+
+  if (removeBtn) {
+    removeBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      updateFileDisplay(null);
+    });
+  }
+}
+window.setupCvDropzone = setupCvDropzone;
+
+function setupAjaxApplicationForm(form) {
+  if (!form || form.dataset.ajaxReady) return;
+  form.dataset.ajaxReady = "true";
+
+  const dropzone = form.querySelector('#cv-dropzone') || form.querySelector('.file-dropzone');
+  const fileInput = form.querySelector('input[type="file"]');
+  if (dropzone && fileInput) {
+    setupCvDropzone(dropzone, fileInput);
+  }
+
+  const successView = document.getElementById('application-success-view');
+  const feedbackMsg = form.querySelector('.form-feedback-msg');
+  const submitBtn = form.querySelector('[type="submit"]');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (feedbackMsg) feedbackMsg.style.display = 'none';
+
+    if (fileInput && fileInput.required && (!fileInput.files || !fileInput.files.length)) {
+      if (feedbackMsg) {
+        feedbackMsg.textContent = currentLang() === 'en'
+          ? 'Please attach your CV before submitting.'
+          : 'Vänligen bifoga ditt CV innan du skickar.';
+        feedbackMsg.style.display = 'block';
+      }
+      return;
+    }
+
+    const originalBtnHTML = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.classList.add('btn-loading');
+    submitBtn.innerHTML = `<span class="btn-spinner"></span> <span>${currentLang() === 'en' ? 'Sending application...' : 'Skickar ansökan...'}</span>`;
+
+    const formData = new FormData(form);
+    const candidateName = formData.get('fi-sender-fullName') || '';
+    const assignmentTitle = formData.get('fi-text-uppdrag') || '';
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.ok) {
+        form.style.display = 'none';
+        if (successView) {
+          const nameSpan = successView.querySelector('#success-assignment-name');
+          if (nameSpan && assignmentTitle) nameSpan.textContent = assignmentTitle;
+          successView.style.display = 'block';
+          successView.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          const resetBtn = successView.querySelector('#btn-submit-another');
+          if (resetBtn) {
+            resetBtn.onclick = () => {
+              form.reset();
+              if (dropzone && fileInput) {
+                const idle = dropzone.querySelector('.dropzone-idle');
+                const sel = dropzone.querySelector('.dropzone-selected');
+                if (idle) idle.style.display = 'flex';
+                if (sel) sel.style.display = 'none';
+              }
+              successView.style.display = 'none';
+              form.style.display = 'block';
+              submitBtn.disabled = false;
+              submitBtn.classList.remove('btn-loading');
+              submitBtn.innerHTML = originalBtnHTML;
+            };
+          }
+        }
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('btn-loading');
+      submitBtn.innerHTML = originalBtnHTML;
+      if (feedbackMsg) {
+        feedbackMsg.textContent = currentLang() === 'en'
+          ? 'Could not submit application right now. Please try again or email kontakt@ankatech.se.'
+          : 'Kunde inte skicka ansökan just nu. Försök igen eller maila oss direkt på kontakt@ankatech.se.';
+        feedbackMsg.style.display = 'block';
+      }
+    }
+  });
+}
+window.setupAjaxApplicationForm = setupAjaxApplicationForm;
+
+function initAssignmentFilters() {
+  const searchInput = document.getElementById('assignment-search-input');
+  const clearBtn = document.getElementById('assignment-search-clear');
+  const filterPills = document.querySelectorAll('#assignment-filter-pills .filter-pill');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      currentSearchQuery = searchInput.value;
+      if (clearBtn) clearBtn.style.display = currentSearchQuery ? 'flex' : 'none';
+      renderAssignments();
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      currentSearchQuery = '';
+      clearBtn.style.display = 'none';
+      renderAssignments();
+    });
+  }
+
+  filterPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      filterPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeFilterTag = pill.getAttribute('data-filter') || 'all';
+      renderAssignments();
     });
   });
+
+  const select = document.querySelector('[data-assignment-select]');
+  if (select) {
+    select.addEventListener('change', () => {
+      const callout = document.getElementById('selected-assignment-callout');
+      const calloutTitle = document.getElementById('callout-assignment-title');
+      if (callout && calloutTitle) {
+        if (select.value) {
+          calloutTitle.textContent = select.value;
+          callout.style.display = 'flex';
+        } else {
+          callout.style.display = 'none';
+        }
+      }
+    });
+  }
 }
 
 const originalApplyLang = applyLang;
@@ -361,10 +706,12 @@ applyLang = function(lang){
 
 translateLabels();
 renderAssignments();
+initAssignmentFilters();
+
+const appForm = document.getElementById('application-form');
+if (appForm) setupAjaxApplicationForm(appForm);
 
 applyLang(localStorage.getItem('ankaLang') || 'sv');
-
-
 
 // Load assignments from CMS-managed JSON. The old assignments-data.js is only a fallback.
 async function loadCmsAssignments(){

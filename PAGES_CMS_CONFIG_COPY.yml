@@ -1,5 +1,5 @@
-# Kopia av .pages.yml. Pages CMS använder filen .pages.yml i repo-roten.
-# Om Pages CMS säger configuration not found, skapa/ladda upp .pages.yml med innehållet nedan.
+# Pages CMS – ANKA Tech
+# Logga in på app.pagescms.org med GitHub för att redigera.
 
 media:
   input: assets
@@ -7,109 +7,133 @@ media:
 
 content:
   - name: assignments
-    label: Uppdrag
+    label: "Uppdrag / Annonser"
     type: file
     path: content/assignments.json
     format: json
     list: true
     fields:
+
+      # ── Grunduppgifter ──────────────────────────────────────────
       - name: id
-        label: ID
+        label: "Unikt ID (Slug)"
         type: string
         required: true
-        description: "Unikt ID utan åäö, mellanslag eller specialtecken. Exempel: adas-engineer-2026."
+        description: "Unikt ID i URL:en, små bokstäver utan mellanslag eller åäö. Ex: adas-ingenjor-astazero"
+
       - name: status
-        label: Status
+        label: "Status"
         type: select
         required: true
+        default: open
         options:
           values:
-            - value: open
-              label: Öppet
-            - value: closed
-              label: Stängt
+            - { value: open,   label: "Öppen (visas på sidan)" }
+            - { value: closed, label: "Stängd (dold)" }
+
       - name: featured
-        label: Visa på startsidan
+        label: "Visa på startsidan"
         type: boolean
-        default: false
+        default: true
+        description: "Om markerad visas uppdraget även bland utvalda uppdrag på startsidan."
+
       - name: title
-        label: Titel
-        type: object
-        fields:
-          - name: sv
-            label: Titel svenska
-            type: string
-            required: true
-          - name: en
-            label: Titel engelska
-            type: string
-            required: true
+        label: "Annonstitel"
+        type: string
+        required: true
+        description: "Ex: Testingenjör inom Fordon & Aktiva Säkerhetssystem"
+
+      - name: client
+        label: "Kund / Arbetsplats"
+        type: string
+        description: "Ex: AstaZero AB eller Ledande fordonstillverkare"
+
+      - name: role
+        label: "Roll / Befattning"
+        type: string
+        description: "Ex: Testingenjör / ADAS"
+
+      - name: seniority
+        label: "Erfarenhetsnivå"
+        type: select
+        default: Mid
+        options:
+          values:
+            - { value: Junior, label: "Junior" }
+            - { value: Mid,    label: "Mid" }
+            - { value: Senior, label: "Senior" }
+            - { value: Lead,   label: "Lead / Specialist" }
+
+      # ── Plats & Tidsplan ────────────────────────────────────────
       - name: location
-        label: Plats
-        type: object
-        fields:
-          - name: sv
-            label: Plats svenska
-            type: string
-          - name: en
-            label: Plats engelska
-            type: string
-      - name: scope
-        label: Omfattning
-        type: object
-        fields:
-          - name: sv
-            label: Omfattning svenska
-            type: string
-          - name: en
-            label: Omfattning engelska
-            type: string
+        label: "Plats"
+        type: string
+        description: "Ex: Göteborg & Borås (SE)"
+
+      - name: remote
+        label: "Remote / På plats"
+        type: select
+        default: "0%"
+        options:
+          values:
+            - { value: "0%",   label: "0% – På plats / bana" }
+            - { value: "25%",  label: "Hybrid (ca 25% remote)" }
+            - { value: "50%",  label: "Hybrid (ca 50% remote)" }
+            - { value: "100%", label: "100% – Helt remote" }
+
       - name: start
-        label: Start
-        type: object
-        fields:
-          - name: sv
-            label: Start svenska
-            type: string
-          - name: en
-            label: Start engelska
-            type: string
+        label: "Startdatum"
+        type: string
+        description: "Ex: November 2026 / Omgående"
+
+      - name: deadline
+        label: "Sista ansökningsdag"
+        type: date
+        description: "Datum då annonsen stänger (ÅÅÅÅ-MM-DD)"
+
+      - name: hours_per_week
+        label: "Omfattning (timmar/vecka)"
+        type: number
+        default: 40
+
+      - name: rate
+        label: "Arvode / Ersättning"
+        type: string
+        description: "Valfritt. Ex: Enligt överenskommelse eller upp till 580 SEK/h"
+
+      # ── Korta sammanfattningen & Taggar ────────────────────────
+      - name: summary
+        label: "Kort sammanfattning (visas på kortet)"
+        type: text
+        description: "1-2 korta meningar som sammanfattar uppdraget och visas på listkorten."
+
       - name: tags
-        label: Taggar
+        label: "Nyckelkompetenser / Taggar"
         type: string
         list: true
-      - name: description
-        label: Beskrivning
-        type: object
-        fields:
-          - name: sv
-            label: Beskrivning svenska
-            type: text
-            required: true
-          - name: en
-            label: Beskrivning engelska
-            type: text
-            required: true
+        description: "Taggar för filtrering och kort. Ex: ADAS, CANalyzer, Vector, Python"
 
+      # ── Annonstext / Huvudinnehåll ─────────────────────────────
+      - name: description
+        label: "Fullständig uppdragsbeskrivning (stödjer Markdown)"
+        type: text
+        required: true
+        description: "Skriv eller klistra in hela annonsen. Du kan använda vanliga rubriker (## Rubrik), punktlistor (- punkt) och fetstil (**text**)."
+
+  # ── Grundinställningar ─────────────────────────────────────────
   - name: site
-    label: Grundinställningar
+    label: "Grundinställningar"
     type: file
     path: content/site.json
     format: json
     fields:
-      - name: company
-        label: Juridiskt bolag
-        type: string
-      - name: brand
-        label: Varumärke
-        type: string
+      - { name: company, label: "Juridiskt bolag",  type: string }
+      - { name: brand,   label: "Varumärke",         type: string }
       - name: contact
-        label: Kontaktformulär
+        label: "Kontaktformulär"
         type: object
         fields:
-          - name: formEndpoint
-            label: Getform endpoint
-            type: string
+          - { name: formEndpoint, label: "Getform endpoint", type: string }
 
 settings:
   hide: false

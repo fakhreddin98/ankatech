@@ -137,11 +137,29 @@
         ${scopeLabel ? `<div class="dj-meta-cell"><span class="dj-meta-label">${lang === "en" ? "Assignment type" : "Uppdragsform"}</span><span class="dj-meta-value">${scopeLabel}</span></div>` : ""}
       </div>`;
 
-    const sectionsHTML = (item.sections || []).map(s => `
-      <div class="dj-section-block">
-        <h3 class="dj-section-heading">${aText(s.heading, lang)}</h3>
-        <div class="dj-section-body">${aText(s.body, lang).replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>").replace(/^/, "<p>").replace(/$/, "</p>")}</div>
-      </div>`).join("");
+    // Summary box
+    const summary = aText(item.summary, lang);
+    const summaryBoxHTML = summary ? `
+      <div class="ad-summary-box">
+        <strong>${lang === "en" ? "Overview: " : "Översikt: "}</strong>
+        ${summary}
+      </div>` : "";
+
+    // Sections or Markdown description
+    let descriptionHTML = "";
+    if (item.sections && item.sections.length) {
+      descriptionHTML = item.sections.map(s => `
+        <div class="dj-section-block">
+          <h3 class="dj-section-heading">${aText(s.heading, lang)}</h3>
+          <div class="dj-section-body">${window.renderMarkdown ? window.renderMarkdown(aText(s.body, lang)) : aText(s.body, lang)}</div>
+        </div>`).join("");
+    } else if (item.description) {
+      const rawDesc = aText(item.description, lang);
+      descriptionHTML = `
+        <div class="dj-section-block dj-main-description">
+          <div class="dj-section-body">${window.renderMarkdown ? window.renderMarkdown(rawDesc) : rawDesc.replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>").replace(/^/, "<p>").replace(/$/, "</p>")}</div>
+        </div>`;
+    }
 
     const requiredSkillsHTML = (item.required_skills || []).length ? `
       <div class="dj-section-block">
@@ -169,8 +187,8 @@
 
     const applyFormTitle = lang === "en" ? "Apply for this assignment" : "Ansök till detta uppdrag";
     const applyFormLead  = lang === "en"
-      ? "Fill in the form and attach your CV. Please include availability, geographic area and relevant technical skills."
-      : "Fyll i formuläret och bifoga ditt CV. Ange gärna tillgänglighet, geografiskt område och relevanta tekniska kompetenser.";
+      ? "Fill in your details and attach your CV below. We review applications continuously."
+      : "Fyll i dina uppgifter och ladda upp ditt CV nedan. Vi granskar ansökningar löpande.";
 
     return `
       <section class="dj-hero reveal">
@@ -180,8 +198,9 @@
           <span>${title}</span>
         </div>
         <div class="dj-hero-badges">
-          <span class="dj-badge dj-badge-open">${lang === "en" ? "Open" : "Öppet"}</span>
+          <span class="dj-badge dj-badge-open">${lang === "en" ? "Open assignment" : "Öppet uppdrag"}</span>
           ${item.seniority ? `<span class="dj-badge dj-badge-seniority">${item.seniority}</span>` : ""}
+          ${item.client ? `<span class="dj-badge" style="background:rgba(82,130,240,0.14);border:1px solid rgba(82,130,240,0.28);color:#8bb2ff;">🏢 ${item.client}</span>` : ""}
         </div>
         <h1>${title}</h1>
         ${role ? `<p class="dj-role-line">${role}</p>` : ""}
@@ -189,8 +208,9 @@
 
       <section class="dj-body reveal delay-1">
         <div class="dj-main-col">
+          ${summaryBoxHTML}
           ${metaGrid}
-          ${sectionsHTML}
+          ${descriptionHTML}
           ${requiredSkillsHTML}
           ${preferredSkillsHTML}
           ${langHTML}
@@ -210,10 +230,11 @@
               <strong>${deadlineStr}${deadlineDays !== null ? `<br><small>${deadlineDays} ${lang === "en" ? "days left" : "dagar kvar"}</small>` : ""}</strong>
             </div>` : ""}
             <a class="button primary" href="#ansok" style="display:block;margin-top:20px;text-align:center">${lang === "en" ? "Apply now" : "Ansök nu"}</a>
+            <button type="button" class="dj-share-btn" id="dj-share-btn">🔗 <span>${lang === "en" ? "Copy assignment link" : "Kopiera annonslänk"}</span></button>
           </div>
 
           <div class="dj-aside-card" style="margin-top:16px">
-            <div class="dj-aside-title">${lang === "en" ? "Tags" : "Taggar"}</div>
+            <div class="dj-aside-title">${lang === "en" ? "Tags & Tech" : "Taggar & Teknik"}</div>
             <div class="dj-skill-pills" style="margin-top:10px">
               ${(item.tags || []).map(tag => `<span class="dj-skill-pill">${tag}</span>`).join("")}
             </div>
@@ -224,47 +245,119 @@
       <section class="section dj-apply-section reveal" id="ansok">
         <div class="dj-apply-header">
           <div>
-            <p class="eyebrow">${lang === "en" ? "Apply" : "Ansök"}</p>
+            <p class="eyebrow">${lang === "en" ? "Application" : "Ansökan"}</p>
             <h2>${applyFormTitle}</h2>
             <p>${applyFormLead}</p>
           </div>
         </div>
 
-        <form class="dj-apply-form contact-form" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
-          <input type="hidden" name="fi-text-formulartyp" value="Ansökan till uppdrag">
-          <input type="hidden" name="fi-text-uppdrag" value="${title}">
+        <div class="form-wrapper">
+          <form class="dj-apply-form contact-form" action="https://getform.io/f/9yi31ff8imi" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="fi-text-formulartyp" value="Ansökan till uppdrag">
+            <input type="hidden" name="fi-text-uppdrag" value="${title}">
 
-          <div class="form-grid">
-            <label><span>${lang === "en" ? "Name" : "Namn"}</span><input type="text" name="fi-sender-fullName" autocomplete="name" required></label>
-            <label><span>${lang === "en" ? "Phone" : "Telefon"}</span><input type="tel" name="fi-sender-phone" autocomplete="tel"></label>
-            <label><span>${lang === "en" ? "Email" : "E-post"}</span><input type="email" name="fi-sender-email" autocomplete="email" required></label>
-            <label><span>${lang === "en" ? "Company / org." : "Bolag / organisation"}</span><input type="text" name="fi-text-bolag"></label>
+            <div class="form-section-header">
+              <span class="form-section-number">01</span>
+              <div>
+                <h3>${lang === "en" ? "Personal information" : "Dina kontaktuppgifter"}</h3>
+                <p>${lang === "en" ? "How can we reach you?" : "Hur når vi dig bäst?"}</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <label><span>${lang === "en" ? "Name" : "Namn"}</span><input type="text" name="fi-sender-fullName" autocomplete="name" required placeholder="${lang === "en" ? "First and last name" : "För- och efternamn"}"></label>
+              <label><span>${lang === "en" ? "Phone" : "Telefon"}</span><input type="tel" name="fi-sender-phone" autocomplete="tel" placeholder="+46 70 123 45 67"></label>
+              <label><span>${lang === "en" ? "Email" : "E-post"}</span><input type="email" name="fi-sender-email" autocomplete="email" required placeholder="namn@epost.se"></label>
+              <label><span>LinkedIn / Portfolio</span><input type="url" name="fi-text-linkedin" placeholder="https://linkedin.com/in/..."></label>
+            </div>
+
+            <div class="form-section-header" style="margin-top:24px;">
+              <span class="form-section-number">02</span>
+              <div>
+                <h3>${lang === "en" ? "Availability & Location" : "Profil & tillgänglighet"}</h3>
+                <p>${lang === "en" ? "Tell us about your current status." : "Hjälp oss förstå din tillgänglighet."}</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <label><span>${lang === "en" ? "Availability" : "Tillgänglighet"}</span><input type="text" name="fi-text-tillganglighet" placeholder="${lang === "en" ? "e.g. immediately, 1 month" : "Ex. Omgående, 1 månad, deltid"}"></label>
+              <label><span>${lang === "en" ? "Geographic area" : "Geografiskt område"}</span><input type="text" name="fi-text-geografiskt-omrade" placeholder="${lang === "en" ? "e.g. Gothenburg, remote" : "Ex. Göteborg, Borås, remote"}"></label>
+            </div>
+
+            <label><span>${lang === "en" ? "Key technical skills" : "Tekniska nyckelkompetenser"}</span>
+              <input type="text" name="fi-text-kompetenser" placeholder="${lang === "en" ? "e.g. ADAS, Python, Vector, CAN" : "Ex. ADAS, Python, CANalyzer, Vector, HIL"}">
+            </label>
+
+            <div class="form-section-header" style="margin-top:24px;">
+              <span class="form-section-number">03</span>
+              <div>
+                <h3>${lang === "en" ? "CV & Motivation" : "Bifoga CV & motivering"}</h3>
+                <p>${lang === "en" ? "Upload your CV and a brief message." : "Ladda upp ditt CV samt en kort motivering."}</p>
+              </div>
+            </div>
+
+            <!-- Modern Drag & Drop CV Upload -->
+            <div class="dropzone-field">
+              <span class="dropzone-label">${lang === "en" ? "CV / Resume" : "CV / Meritförteckning"} <span class="required-star">*</span></span>
+              <div class="file-dropzone" id="cv-dropzone">
+                <input type="file" name="fi-file-bilaga" id="cv-file-input" accept=".pdf,.doc,.docx" required class="file-input-hidden">
+                <div class="dropzone-content dropzone-idle">
+                  <div class="dropzone-icon">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                  </div>
+                  <div class="dropzone-text">
+                    <strong>${lang === "en" ? "Click to select file" : "Klicka för att välja fil"}</strong> ${lang === "en" ? "or drag & drop your CV here" : "eller dra & släpp ditt CV här"}
+                  </div>
+                  <div class="dropzone-hint">${lang === "en" ? "Formats: PDF or Word (max 10 MB)" : "Format: PDF eller Word (max 10 MB)"}</div>
+                </div>
+                <div class="dropzone-content dropzone-selected" style="display:none;">
+                  <div class="dropzone-file-info">
+                    <span class="file-badge-icon">📄</span>
+                    <div class="file-details">
+                      <strong class="dropzone-filename">filnamn.pdf</strong>
+                      <span class="dropzone-filesize">1.2 MB</span>
+                    </div>
+                  </div>
+                  <button type="button" class="dropzone-remove-file" title="Byt fil">${lang === "en" ? "Change file" : "Byt fil"}</button>
+                </div>
+              </div>
+            </div>
+
+            <label><span>${lang === "en" ? "Message / Motivation" : "Kort motivering / meddelande"}</span>
+              <textarea name="fi-textarea-meddelande" rows="5" required placeholder="${lang === "en" ? "Briefly describe why this assignment matches your profile." : "Beskriv kort varför uppdraget passar din profil och vad du har arbetat med tidigare."}"></textarea>
+            </label>
+
+            <label class="consent">
+              <input type="checkbox" name="fi-text-samtycke" required>
+              <span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
+            </label>
+
+            <div class="form-feedback-msg" style="display:none;" role="alert"></div>
+
+            <button class="button primary magnetic btn-submit-app" type="submit">
+              <span>${lang === "en" ? "Send application" : "Skicka ansökan"}</span>
+            </button>
+          </form>
+
+          <div class="form-success-card" id="application-success-view" style="display:none;">
+            <div class="success-icon-wrap">
+              <svg class="checkmark-svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="24" fill="none"/>
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              </svg>
+            </div>
+            <h3>${lang === "en" ? "Thank you for your application!" : "Tack för din ansökan!"}</h3>
+            <p class="success-subtitle">${lang === "en" ? "We have received your profile for " : "Vi har tagit emot ditt underlag för "}<strong id="success-assignment-name">${title}</strong>.</p>
+            <p class="success-desc">${lang === "en" ? "Our team will review your CV and get back to you as soon as possible." : "Vårt team går igenom ditt CV och återkommer till dig så snart som möjligt."}</p>
+            <div class="success-actions">
+              <a href="uppdrag.html" class="button primary">${lang === "en" ? "View all assignments" : "Se alla uppdrag"}</a>
+            </div>
           </div>
-
-          <div class="form-grid">
-            <label><span>${lang === "en" ? "Availability" : "Tillgänglighet"}</span><input type="text" name="fi-text-tillganglighet" placeholder="${lang === "en" ? "e.g. immediately, part-time" : "Ex. omgående, deltid"}"></label>
-            <label><span>${lang === "en" ? "Geographic area" : "Geografiskt område"}</span><input type="text" name="fi-text-geografiskt-omrade" placeholder="${lang === "en" ? "e.g. Gothenburg, remote" : "Ex. Göteborg, remote"}"></label>
-          </div>
-
-          <label><span>${lang === "en" ? "Key technical skills" : "Tekniska nyckelkompetenser"}</span>
-            <input type="text" name="fi-text-kompetenser" placeholder="${lang === "en" ? "e.g. ADAS, Python, GNSS/INS" : "Ex. ADAS, Python, GNSS/INS, CAN"}">
-          </label>
-
-          <label><span>${lang === "en" ? "Attachment / CV" : "Bilaga / CV"}</span>
-            <input type="file" name="fi-file-bilaga" accept=".pdf,.doc,.docx" required>
-          </label>
-
-          <label><span>${lang === "en" ? "Message" : "Meddelande"}</span>
-            <textarea name="fi-textarea-meddelande" rows="6" required placeholder="${lang === "en" ? "Briefly describe why this assignment matches your profile." : "Beskriv kort varför uppdraget passar din profil."}"></textarea>
-          </label>
-
-          <label class="consent">
-            <input type="checkbox" name="fi-text-samtycke" required>
-            <span data-i18n="form.consent">Jag samtycker till att ANKA Engineering AB behandlar mina uppgifter för att kunna återkomma i ärendet.</span>
-          </label>
-
-          <button class="button primary magnetic" type="submit">${lang === "en" ? "Send application" : "Skicka ansökan"}</button>
-        </form>
+        </div>
       </section>
     `;
   }
@@ -310,6 +403,26 @@
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
     }, { threshold: 0.08 });
     document.querySelectorAll(".reveal").forEach(el => obs.observe(el));
+
+    // Setup Drag & Drop and AJAX on application form
+    const form = content.querySelector('.dj-apply-form');
+    if (form && window.setupAjaxApplicationForm) {
+      window.setupAjaxApplicationForm(form);
+    }
+
+    // Setup share button
+    const shareBtn = content.querySelector('#dj-share-btn');
+    if (shareBtn) {
+      shareBtn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          const span = shareBtn.querySelector('span');
+          const orig = span.textContent;
+          span.textContent = lang === 'en' ? 'Link copied! ✓' : 'Länk kopierad! ✓';
+          setTimeout(() => { span.textContent = orig; }, 2200);
+        } catch (_) {}
+      };
+    }
 
     // Magnetic buttons
     document.querySelectorAll(".magnetic").forEach(btn => {
