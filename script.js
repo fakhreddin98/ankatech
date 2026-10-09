@@ -607,7 +607,12 @@ function setupAjaxApplicationForm(form) {
 
     const candidateName = getVal(['[name="fi-sender-fullName"]', '[name="Namn"]', '[name="name"]']) || 'Okänd sökande';
     const email = getVal(['[name="fi-sender-email"]', '[name="Epost"]', '[name="email"]']);
-    const phone = getVal(['[name="fi-sender-phone"]', '[name="Telefon"]', '[name="phone"]']) || 'Ej angivet';
+
+    // Normalize phone: strip spaces, dashes, parens then convert Swedish 07x → +467x
+    let rawPhone = getVal(['[name="fi-sender-phone"]', '[name="Telefon"]', '[name="phone"]']) || '';
+    let phone = rawPhone.replace(/[\s\-().]/g, '');
+    if (/^07\d{7,8}$/.test(phone)) phone = '+46' + phone.slice(1);
+    if (!phone) phone = 'Ej angivet';
 
     let assignmentTitle = getVal(['[name="fi-text-uppdrag"]']);
     if (!assignmentTitle) {
@@ -624,11 +629,15 @@ function setupAjaxApplicationForm(form) {
     const formType = getVal(['[name="fi-text-formulartyp"]']) || 'Ansökan till uppdrag';
 
     // Build payload strictly following Forminit fi-{blockType}-{name} schema
-    // Forminit only recognizes fields with fi- prefix (fi-sender-*, fi-text-*, fi-file-*)
     const sendData = new FormData();
     sendData.append('fi-sender-fullName', candidateName);
     if (email) sendData.append('fi-sender-email', email);
-    sendData.append('fi-sender-phone', phone);
+    // fi-sender-phone requires E.164 (+46...). Fall back to fi-text-telefon to avoid 400 errors.
+    if (/^\+\d{7,15}$/.test(phone)) {
+      sendData.append('fi-sender-phone', phone);
+    } else {
+      sendData.append('fi-text-telefon', phone !== 'Ej angivet' ? phone : 'Ej angivet');
+    }
 
     sendData.append('fi-text-formulartyp', formType);
     sendData.append('fi-text-uppdrag', assignmentTitle);
@@ -680,7 +689,7 @@ function setupAjaxApplicationForm(form) {
           }
         }
       } else {
-        throw new Error('Server error');
+        throw new Error('http_' + res.status);
       }
     } catch (err) {
       submitBtn.disabled = false;
