@@ -697,8 +697,8 @@ function setupAjaxApplicationForm(form) {
       submitBtn.innerHTML = originalBtnHTML;
       if (feedbackMsg) {
         feedbackMsg.textContent = currentLang() === 'en'
-          ? 'Could not submit application right now. Please try again or email kontakt@ankatech.se.'
-          : 'Kunde inte skicka ansökan just nu. Försök igen eller maila oss direkt på kontakt@ankatech.se.';
+          ? 'Could not submit application right now. Please try again or email info@ankatech.se.'
+          : 'Kunde inte skicka ansökan just nu. Försök igen eller maila oss direkt på info@ankatech.se.';
         feedbackMsg.style.display = 'block';
       }
     }
