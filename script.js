@@ -595,8 +595,47 @@ function setupAjaxApplicationForm(form) {
     submitBtn.innerHTML = `<span class="btn-spinner"></span> <span>${currentLang() === 'en' ? 'Sending application...' : 'Skickar ansökan...'}</span>`;
 
     const formData = new FormData(form);
-    const candidateName = formData.get('fi-sender-fullName') || '';
-    const assignmentTitle = formData.get('fi-text-uppdrag') || '';
+
+    const getVal = (keys) => {
+      for (const k of keys) {
+        const v = formData.get(k);
+        if (v && typeof v === 'string' && v.trim()) return v.trim();
+      }
+      return null;
+    };
+
+    const candidateName = getVal(['fi-sender-fullName', 'Namn', 'name']) || 'Okänd';
+    const email = getVal(['fi-sender-email', 'Epost', 'E-post', 'email']) || '';
+    const phone = getVal(['fi-sender-phone', 'Telefon', 'phone']) || 'Ej angivet';
+    const assignmentTitle = getVal(['fi-text-uppdrag', 'Uppdrag']) || 'Spontanansökan / Valfritt';
+    const tillg = getVal(['fi-text-tillganglighet', 'Tillganglighet', 'Tillgänglighet']) || 'Ej angivet (snarast)';
+    const geo = getVal(['fi-text-geografiskt-omrade', 'Geografiskt_omrade', 'Geografiskt område']) || 'Ej angivet';
+    const komp = getVal(['fi-text-kompetenser', 'Kompetenser', 'Tekniska kompetenser']) || 'Ej angivet';
+    const link = getVal(['fi-text-linkedin', 'LinkedIn', 'LinkedIn / Portfolio']) || 'Ej angivet';
+    const msg = getVal(['fi-textarea-meddelande', 'Meddelande', 'message']) || 'Inget personligt meddelande bifogat';
+
+    // Rensa bort gamla tekniska 'fi-' fältnamn så Getform visar rena rubriker
+    ['fi-text-tillganglighet', 'fi-text-geografiskt-omrade', 'fi-text-kompetenser', 'fi-text-linkedin', 'fi-textarea-meddelande', 'fi-text-formulartyp', 'fi-text-samtycke'].forEach(k => formData.delete(k));
+
+    // Skapa rena, fullständiga fält för Getform (Getform döljer tomma fält, så vi skickar alltid värden)
+    formData.set('Namn', candidateName);
+    if (email) formData.set('E-post', email);
+    formData.set('Telefon', phone);
+    formData.set('Uppdrag', assignmentTitle);
+    formData.set('Tillgänglighet', tillg);
+    formData.set('Geografiskt område', geo);
+    formData.set('Tekniska kompetenser', komp);
+    formData.set('LinkedIn / Portfolio', link);
+    formData.set('Meddelande', msg);
+    formData.set('Samtycke', 'Godkänt');
+    formData.set('Sammanfattning', `${candidateName} | Uppdrag: ${assignmentTitle} | Ort: ${geo} | Start: ${tillg}`);
+
+    // Döp filen till en tydlig rubrik i Getform
+    const cvFile = formData.get('fi-file-bilaga') || formData.get('CV_Bilaga');
+    if (cvFile && cvFile.size > 0) {
+      formData.delete('fi-file-bilaga');
+      formData.set('CV_Bilaga', cvFile);
+    }
 
     try {
       const res = await fetch(form.action, {
